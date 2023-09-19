@@ -1,3 +1,3 @@
-# React + Vite + material UI + axios + firebase + formik + sweetAlert + uuid + yup + react-router-dom
+# React + Vite + material UI + axios + firebase + formik + sweetAlert + uuid + yup + react-router-dom + canvas-confetti
 
-Taller de eCommerce de la mano del gran JDuje
+eCommerce tunning
