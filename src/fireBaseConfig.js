@@ -4,8 +4,8 @@ import { signInWithEmailAndPassword, getAuth, signOut, signInWithPopup, GoogleAu
 
 import { getFirestore } from 'firebase/firestore'
 
-import {getStorage, ref, uploadBytes, getDownloadURL} from 'firebase/storage'
-import {v4} from 'uuid'
+import { getStorage, ref, uploadBytes, getDownloadURL, uploadBytesResumable } from 'firebase/storage'
+import { v4 } from 'uuid'
 
 const firebaseConfig = {
     apiKey: import.meta.env.VITE_APIKEY,
@@ -71,9 +71,30 @@ export const resetPassword = async (email) => {
 }
 
 // storage
-export const uploadFile = async (file)=>{
-    const storageRef = ref( storage, v4() )
-    await uploadBytes(storageRef, file)
-    let url = await getDownloadURL(storageRef)
-    return url
-  }
+export const uploadFile = async (file, onProgress) => {
+    const storageRef = ref(storage, v4())
+    const uploadTask = uploadBytesResumable(storageRef, file)
+
+
+    uploadTask.on('state_changed', (snapshot) => {
+        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+
+        if (onProgress) {
+            onProgress(progress);
+        }
+    });
+
+
+    try {
+        // Esperar a que la carga se complete
+        await uploadTask;
+
+        // Obtener la URL de descarga
+        const url = await getDownloadURL(storageRef);
+        return url;
+    } catch (error) {
+        console.error("Error al cargar la imagen:", error);
+        throw error; // Puedes manejar el error aquí o dejar que se propague
+    }
+
+}

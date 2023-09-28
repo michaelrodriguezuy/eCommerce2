@@ -92,7 +92,7 @@ const Checkout = () => {
 
     try {
       let response = await axios.post(
-        "https://e-commerce-personal-backend-q6f9ku4xl-michaelrodriguezuy.vercel.app/create_preference",
+        "http://localhost:8080/create_preference",
         {
           items: items,
           shipment_cost: shipmentCost,

@@ -1,11 +1,11 @@
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
+import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { Button, IconButton } from "@mui/material";
+import { Button, IconButton, Tooltip, styled } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { deleteDoc, doc } from "firebase/firestore";
@@ -26,10 +26,31 @@ const style = {
   boxShadow: 24,
   p: 4,
 };
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  [`&.${tableCellClasses.head}`]: {
+    backgroundColor: theme.palette.common.black,
+    color: theme.palette.common.white,
+  },
+  [`&.${tableCellClasses.body}`]: {
+    fontSize: 14,
+  },
+}));
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  "&:nth-of-type(odd)": {
+    backgroundColor: theme.palette.action.hover,
+  },
+  // hide last border
+  "&:last-child td, &:last-child th": {
+    border: 0,
+  },
+}));
 
-const ProductsList = ({ products, setIsChange }) => {
+const ProductsList = ({ products, categories, setIsChange }) => {
   const [open, setOpen] = useState(false);
   const [productSelected, setProductSelected] = useState(null);
+
+  const [orderBy, setOrderBy] = useState("");
+  const [orderDirection, setOrderDirection] = useState("asc");
 
   const deleteProduct = (id) => {
     deleteDoc(doc(db, "products", id));
@@ -45,57 +66,119 @@ const ProductsList = ({ products, setIsChange }) => {
     setOpen(true);
   };
 
+  const handleRequestSort = (property) => {
+    const isAsc = orderBy === property && orderDirection === "asc";
+    setOrderBy(property);
+    setOrderDirection(isAsc ? "desc" : "asc");
+  };
+
+  function stableSort(array, comparator) {
+    const stabilizedThis = array.map((el, index) => [el, index]);
+    stabilizedThis.sort((a, b) => {
+      const order = comparator(a[0], b[0]);
+      if (order !== 0) return order;
+      return a[1] - b[1];
+    });
+    return stabilizedThis.map((el) => el[0]);
+  }
+
+  function getComparator(order, orderBy) {
+    return (a, b) => {
+      if (order === "asc") {
+        return a[orderBy] < b[orderBy] ? -1 : 1;
+      } else {
+        return b[orderBy] < a[orderBy] ? -1 : 1;
+      }
+    };
+  }
+
+  const sortedProducts = stableSort(
+    products,
+    getComparator(orderDirection, orderBy)
+  );
+
   return (
     <div>
       <Button variant="contained" onClick={() => handleOpen(null)}>
         Agregar nuevo
       </Button>
-      <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+      <TableContainer component={Paper} style={{ marginTop: "5px" }}>
+        <Table sx={{ minWidth: 650 }} aria-label="customized table">
           <TableHead>
             <TableRow>
-              <TableCell align="left">id</TableCell>
-              <TableCell align="left">titulo</TableCell>
-              <TableCell align="center">precio</TableCell>
-              <TableCell align="center">stock</TableCell>
-              <TableCell align="center">imagen</TableCell>
-              <TableCell align="left">categoria</TableCell>
-              <TableCell align="center">acciones</TableCell>
+              <StyledTableCell align="left">
+                <Tooltip title="Clic para ordenar">
+                  <span onClick={() => handleRequestSort("code")}>Código</span>
+                </Tooltip>
+              </StyledTableCell>
+
+              <StyledTableCell align="left">
+                <Tooltip title="Clic para ordenar">
+                  <span onClick={() => handleRequestSort("title")}>Título</span>
+                </Tooltip>
+              </StyledTableCell>
+
+              <StyledTableCell align="center">
+                <Tooltip title="Clic para ordenar">
+                  <span onClick={() => handleRequestSort("unit_price")}>
+                    Precio
+                  </span>
+                </Tooltip>
+              </StyledTableCell>
+
+              <StyledTableCell align="center">
+                <Tooltip title="Clic para ordenar">
+                  <span onClick={() => handleRequestSort("stock")}>Stock</span>
+                </Tooltip>
+              </StyledTableCell>
+
+              <StyledTableCell align="center">Imágen</StyledTableCell>
+
+              <StyledTableCell align="left">
+                <Tooltip title="Clic para ordenar">
+                  <span onClick={() => handleRequestSort("category")}>
+                    Categoría
+                  </span>
+                </Tooltip>
+              </StyledTableCell>
+
+              <StyledTableCell align="center">Acciones</StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {products.map((product) => (
-              <TableRow
+            {sortedProducts.map((product) => (
+              <StyledTableRow
                 key={product.id}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
-                <TableCell component="th" scope="row" align="left">
-                  {product.id}
-                </TableCell>
-                <TableCell component="th" scope="row" align="left">
-                  {product.title}
-                </TableCell>
-                <TableCell component="th" scope="row" align="center">
+                <StyledTableCell component="th" scope="row" align="left">
+                  {product.code}
+                </StyledTableCell>
+                <StyledTableCell align="left">{product.title}</StyledTableCell>
+                <StyledTableCell align="center">
                   {product.unit_price}
-                </TableCell>
-                <TableCell component="th" scope="row" align="center">
+                </StyledTableCell>
+                <StyledTableCell align="center">
                   {product.stock}
-                </TableCell>
-                <TableCell component="th" scope="row" align="center">
+                </StyledTableCell>
+
+                <StyledTableCell align="center">
                   <img src={product.image} alt="" style={{ height: "80px" }} />
-                </TableCell>
-                <TableCell component="th" scope="row" align="left">
+                </StyledTableCell>
+
+                <StyledTableCell align="left">
                   {product.category}
-                </TableCell>
-                <TableCell component="th" scope="row" align="center">
+                </StyledTableCell>
+
+                <StyledTableCell align="center">
                   <IconButton onClick={() => handleOpen(product)}>
                     <EditIcon color="primary" />
                   </IconButton>
                   <IconButton onClick={() => deleteProduct(product.id)}>
                     <DeleteForeverIcon color="primary" />
                   </IconButton>
-                </TableCell>
-              </TableRow>
+                </StyledTableCell>
+              </StyledTableRow>
             ))}
           </TableBody>
         </Table>
@@ -113,6 +196,7 @@ const ProductsList = ({ products, setIsChange }) => {
             setIsChange={setIsChange}
             productSelected={productSelected}
             setProductSelected={setProductSelected}
+            categories={categories}
           />
         </Box>
       </Modal>

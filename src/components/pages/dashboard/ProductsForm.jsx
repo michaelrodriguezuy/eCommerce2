@@ -1,4 +1,4 @@
-import { Button, TextField } from "@mui/material";
+import { Button, LinearProgress, MenuItem, TextField } from "@mui/material";
 import { useState } from "react";
 import { db, uploadFile } from "../../../fireBaseConfig";
 import { addDoc, collection, doc, updateDoc } from "firebase/firestore";
@@ -8,9 +8,13 @@ const ProductsForm = ({
   setIsChange,
   productSelected,
   setProductSelected,
+  categories,
 }) => {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [uploadProgress, setUploadProgress] = useState(0);
+
   const [newProduct, setNewProduct] = useState({
+    code: "",
     title: "",
     description: "",
     unit_price: 0,
@@ -22,15 +26,25 @@ const ProductsForm = ({
 
   const handleImage = async () => {
     setIsLoading(true);
-    let url = await uploadFile(file);
 
-    if (productSelected) {
-      setProductSelected({ ...productSelected, image: url });
-    } else {
-      setNewProduct({ ...newProduct, image: url });
+    try {
+      let url = await uploadFile(file, (snapshot) => {
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        setUploadProgress(progress);
+      });
+
+      if (productSelected) {
+        setProductSelected({ ...productSelected, image: url });
+      } else {
+        setNewProduct({ ...newProduct, image: url });
+      }
+
+      setIsLoading(false); //aca se muestra nuevamente el boton de submit
+    } catch (error) {
+      console.error("Error al cargar la imagen:", error);
+      setIsLoading(false);
     }
-
-    setIsLoading(false);
   };
 
   const handleChange = (e) => {
@@ -85,15 +99,22 @@ const ProductsForm = ({
       >
         <TextField
           variant="outlined"
+          defaultValue={productSelected?.code}
+          label="código"
+          name="code"
+          onChange={handleChange}
+        />
+        <TextField
+          variant="outlined"
           defaultValue={productSelected?.title}
-          label="nombre"
+          label="titulo"
           name="title"
           onChange={handleChange}
         />
         <TextField
           variant="outlined"
           defaultValue={productSelected?.description}
-          label="descripcion"
+          label="descripción"
           name="description"
           onChange={handleChange}
         />
@@ -114,18 +135,41 @@ const ProductsForm = ({
         <TextField
           variant="outlined"
           defaultValue={productSelected?.category}
-          label="categoria"
+          label="Categoría"
           name="category"
+          select
           onChange={handleChange}
-        />
+        >
+          {categories.map((category) => (
+            <MenuItem key={category.id} value={category.name}>
+              {category.name}
+            </MenuItem>
+          ))}
+        </TextField>
         <TextField type="file" onChange={(e) => setFile(e.target.files[0])} />
         {file && (
-          <Button onClick={handleImage} type="button">
-            Cargar imagen
-          </Button>
+          <div>
+            <div style={{ display: "flex", justifyContent: "center" }}>
+              <Button onClick={handleImage} type="button" disabled={!isLoading}>
+                Cargar imagen
+              </Button>
+            </div>
+            <div>
+              <LinearProgress
+                variant="determinate"
+                value={uploadProgress}
+                sx={{ marginBottom: "10px" }}
+              />
+            </div>
+          </div>
         )}
+
         {file && !isLoading && (
-          <Button variant="contained" type="submit">
+          <Button
+            variant="contained"
+            type="submit"
+            style={{ display: "flex", justifyContent: "center" }}
+          >
             {productSelected ? "modificar" : "crear"}
           </Button>
         )}
