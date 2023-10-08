@@ -47,6 +47,8 @@ const Dashboard = () => {
   const [shipments, setShipments] = useState([]);
   const [currentShipmentId, setCurrentShipmentId] = useState("");
   const [currentShipmentName, setCurrentShipmentName] = useState("");
+  const [currentShipmentDescription, setCurrentShipmentDescription] =
+    useState("");
   const [currentShipmentCost, setCurrentShipmentCost] = useState(0);
   const [openModalShipment, setOpenModalShipment] = useState(false);
 
@@ -80,6 +82,7 @@ const Dashboard = () => {
       const shipmentList = querySnapshot.docs.map((doc) => ({
         id: doc.id,
         name: doc.data().name,
+        description: doc.data().description,
         cost: doc.data().cost,
       }));
       setShipments(shipmentList);
@@ -93,11 +96,13 @@ const Dashboard = () => {
       if (currentShipmentId) {
         await updateDoc(doc(db, "shipment", currentShipmentId), {
           name: currentShipmentName,
+          description: currentShipmentDescription,
           cost: currentShipmentCost,
         });
       } else {
         const newShipmentRef = await addDoc(collection(db, "shipment"), {
           name: currentShipmentName || "Nuevo envío",
+          description: currentShipmentDescription || "Descripción",
           cost: currentShipmentCost,
         });
 
@@ -106,6 +111,7 @@ const Dashboard = () => {
           {
             id: newShipmentRef.id,
             name: currentShipmentName,
+            description: currentShipmentDescription,
             cost: currentShipmentCost,
           },
         ]);
@@ -122,12 +128,14 @@ const Dashboard = () => {
     setOpenModalShipment(false);
     setCurrentShipmentId("");
     setCurrentShipmentName("");
+    setCurrentShipmentDescription("");
     setCurrentShipmentCost(0);
   };
 
   const handleEditClick = (shipment) => {
     setCurrentShipmentId(shipment.id);
     setCurrentShipmentName(shipment.name);
+    setCurrentShipmentDescription(shipment.description);
     setCurrentShipmentCost(shipment.cost);
     setOpenModalShipment(true);
   };
@@ -250,6 +258,11 @@ const Dashboard = () => {
             label="Nuevo retiro"
             value={currentShipmentName}
             onChange={(e) => setCurrentShipmentName(e.target.value)}
+          />
+          <TextField
+            label="Descripción"
+            value={currentShipmentDescription}
+            onChange={(e) => setCurrentShipmentDescription(e.target.value)}
           />
           <TextField
             label="Costo"

@@ -8,9 +8,9 @@ import Dashboard from "../components/pages/dashboard/Dashboard";
 import ProtectedAdmin from "./ProtectedAdmin";
 import ProtectedUsers from "./ProtectedUsers";
 import Orders from "../components/pages/orders/Orders";
+import Footer from "../components/layout/footer/Footer";
 
 const AppRouter = () => {
-
   return (
     <Routes>
       {/* Users logueados*/}
@@ -21,6 +21,7 @@ const AppRouter = () => {
           ))}
         </Route>
       </Route>
+      {/* <Footer /> */}
 
       {/* Admin logueados*/}
       <Route element={<ProtectedAdmin />}>
@@ -30,6 +31,7 @@ const AppRouter = () => {
           <Route path="/dashboard/orders" element={<Orders />} />
         </Route>
       </Route>
+      {/* <Footer /> */}
 
       {/* Login */}
       <Route path="/login" element={<Login />} />

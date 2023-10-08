@@ -30,7 +30,7 @@ const AuthContextComponent = ({ children }) => {
     //window.location.reload(); //CON ESTE ANDA
   };
 
-  const sessionTimeout = 120000000; // 120000 -> 2 minutos
+  const sessionTimeout = 120000; // 120000 -> 2 minutos
   let timeoutId;
 
   const resetSessionTimeout = () => {
