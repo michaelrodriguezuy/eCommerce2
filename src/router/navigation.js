@@ -1,10 +1,8 @@
 import HomeIcon from '@mui/icons-material/Home';
 import StoreIcon from '@mui/icons-material/Store';
-import ShoppingCartCheckoutIcon from "@mui/icons-material/ShoppingCartCheckout";
+// import ShoppingCartCheckoutIcon from "@mui/icons-material/ShoppingCartCheckout";
 import ShopIcon from '@mui/icons-material/Shop';
 import ContactPageIcon from '@mui/icons-material/ContactPage';
-
-import categories from "./categories";
 
 export const menuItems = [    
    
@@ -19,18 +17,14 @@ export const menuItems = [
         path: "/shop",
         title: "Tienda",
         Icon: StoreIcon,
-        subMenuItems: categories.map(category => ({
-            id: category.id,
-            path: `/shop/${category.id}`,
-            title: category.title
-        }))
+       
     },
-    {
-        id: "cart",
-        path: "/cart",
-        title: "Carrito",
-        Icon: ShoppingCartCheckoutIcon
-    },
+    // {
+    //     id: "cart",
+    //     path: "/cart",
+    //     title: "Carrito",
+    //     Icon: ShoppingCartCheckoutIcon
+    // },
     {
         id: "dataUser",
         path: "/data-user",

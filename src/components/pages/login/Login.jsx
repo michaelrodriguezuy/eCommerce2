@@ -31,6 +31,8 @@ const Login = () => {
   const navigate = useNavigate();
   const handleClickShowPassword = () => setShowPassword(!showPassword);
 
+  const idArticuloRedirigido = localStorage.getItem("originalArticleId");
+
   let initialValues = {
     email: "",
     password: "",
@@ -61,10 +63,13 @@ const Login = () => {
           email: res.user.email,
           id: res.user.uid,
           name: userDoc.data().name,
+          lastname: userDoc.data().lastname,
           rol: userDoc.data().rol,
         };
 
         handleLogin(finalyUser);
+
+        // navigate(idArticuloRedirigido || "/");
         navigate("/");
       } else {
         Swal.fire({
@@ -91,14 +96,15 @@ const Login = () => {
       };
 
       handleLogin(finalyUser);
-      
-      // ahora quiero registrar este usuario en la colección de users    
+
+      // ahora quiero registrar este usuario en la colección de users
       try {
         await registerUserGoogle(finalyUser);
       } catch (error) {
         console.log(error);
       }
 
+      // navigate(idArticuloRedirigido || "/");
       navigate("/");
     } catch (error) {
       console.log(error);
@@ -108,9 +114,9 @@ const Login = () => {
   //metodo para registrar el usuario que se logueo por google en la colección de users
   const registerUserGoogle = async (user) => {
     // no quiero que me guarde un nuevo ID, ya traigo el ID de google
-    
+
     // tengo que preguntar si ya no existe un usuario con ese ID
-    
+
     const userCollection = collection(db, "users");
     const userRef = doc(userCollection, user.id);
     const userDoc = await getDoc(userRef);
@@ -119,14 +125,14 @@ const Login = () => {
       // el usuario ya existe, no hago nada
       return;
     }
-    // el usuario no existe, lo creo   
+    // el usuario no existe, lo creo
     let newUser = {
       name: user.name,
       lastname: user.lastname,
       email: user.email,
       rol: user.rol,
     };
-    await setDoc(userRef, newUser);    
+    await setDoc(userRef, newUser);
   };
 
   const formik = useFormik({

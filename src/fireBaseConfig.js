@@ -4,7 +4,7 @@ import { signInWithEmailAndPassword, getAuth, signOut, signInWithPopup, GoogleAu
 
 import { getFirestore } from 'firebase/firestore'
 
-import { getStorage, ref, uploadBytes, getDownloadURL, uploadBytesResumable } from 'firebase/storage'
+import { getStorage, ref, getDownloadURL, uploadBytesResumable } from 'firebase/storage'
 import { v4 } from 'uuid'
 
 const firebaseConfig = {
@@ -73,8 +73,7 @@ export const resetPassword = async (email) => {
 // storage
 export const uploadFile = async (file, onProgress) => {
     const storageRef = ref(storage, v4())
-    const uploadTask = uploadBytesResumable(storageRef, file)
-
+    const uploadTask = uploadBytesResumable(storageRef, file);
 
     uploadTask.on('state_changed', (snapshot) => {
         const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
@@ -83,6 +82,7 @@ export const uploadFile = async (file, onProgress) => {
             onProgress(progress);
         }
     });
+
 
 
     try {

@@ -1,4 +1,4 @@
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 
 export const AuthContext = createContext();
 
@@ -20,9 +20,42 @@ const AuthContextComponent = ({ children }) => {
   const logoutContext = () => {
     setUser({});
     setIsLogged(false);
-    localStorage.removeItem("userInfo");
-    localStorage.removeItem("isLogged");
+
+    localStorage.clear();
+
+    //en realidad quiero actualizar la pagina cart.jsx
+    history.go(0); //este tiene el mismo efecto que windows.location.reload(), se ve el refresco de la pagina login
+
+    //pero no funciona, entonces uso window.location.reload()
+    //window.location.reload(); //CON ESTE ANDA
   };
+
+  const sessionTimeout = 120000000; // 120000 -> 2 minutos
+  let timeoutId;
+
+  const resetSessionTimeout = () => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => {
+      logoutContext();
+    }, sessionTimeout);
+  };
+
+  const handleActivity = () => {
+    resetSessionTimeout();
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousemove", handleActivity);
+    document.addEventListener("keydown", handleActivity);
+
+    resetSessionTimeout();
+
+    return () => {
+      clearTimeout(timeoutId);
+      document.removeEventListener("mousemove", handleActivity);
+      document.removeEventListener("keydown", handleActivity);
+    };
+  }, []);
 
   let data = {
     user,

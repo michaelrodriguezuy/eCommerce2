@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
 import { useState } from "react";
 import { db } from "../../../fireBaseConfig";
 import {
@@ -8,21 +8,25 @@ import {
   doc,
   query,
   addDoc,
-  getDoc,
 } from "firebase/firestore";
 import ProductsList from "./ProductsList";
 import {
   Box,
   Button,
   FormControl,
+  IconButton,
   InputLabel,
   Modal,
+  Paper,
   TextField,
+  Tooltip,
   Typography,
 } from "@mui/material";
-import { Link } from "react-router-dom";
+import EditIcon from "@mui/icons-material/Edit"; // Importa el ícono que desees usar
 
 import { MenuItem, Select } from "@mui/material";
+import { Link } from "react-router-dom";
+import { CartContext } from "../../../context/CartContext";
 
 const style = {
   position: "absolute",
@@ -39,19 +43,26 @@ const style = {
 const Dashboard = () => {
   const [products, setProducts] = useState([]);
   const [isChange, setIsChange] = useState(false);
+
+  const [shipments, setShipments] = useState([]);
+  const [currentShipmentId, setCurrentShipmentId] = useState("");
+  const [currentShipmentName, setCurrentShipmentName] = useState("");
+  const [currentShipmentCost, setCurrentShipmentCost] = useState(0);
   const [openModalShipment, setOpenModalShipment] = useState(false);
-  const [shipmentCost, setShipmentCost] = useState(null);
-  const [currentShipmentCost, setCurrentShipmentCost] = useState(null);
+
+  const [forceUpdate, setForceUpdate] = useState(false);
 
   const [category, setCategory] = useState("");
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [openModalCategory, setOpenModalCategory] = useState(false);
 
+  const { getFormatCurrency } = useContext(CartContext);
+
   useEffect(() => {
     setIsChange(false);
-    let prodcutsCollection = collection(db, "products");
-    getDocs(prodcutsCollection).then((res) => {
+    let productsCollection = collection(db, "products");
+    getDocs(productsCollection).then((res) => {
       const newArr = res.docs.map((product) => {
         return {
           ...product.data(),
@@ -62,32 +73,63 @@ const Dashboard = () => {
     });
   }, [isChange]);
 
-  const handleClose = () => {
-    setOpenModalShipment(false);
+  useEffect(() => {
+    const fetchShipments = async () => {
+      const shipmentCollection = collection(db, "shipment");
+      const querySnapshot = await getDocs(shipmentCollection);
+      const shipmentList = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        name: doc.data().name,
+        cost: doc.data().cost,
+      }));
+      setShipments(shipmentList);
+    };
+
+    fetchShipments();
+  }, [forceUpdate]);
+
+  const updateShipment = async () => {
+    try {
+      if (currentShipmentId) {
+        await updateDoc(doc(db, "shipment", currentShipmentId), {
+          name: currentShipmentName,
+          cost: currentShipmentCost,
+        });
+      } else {
+        const newShipmentRef = await addDoc(collection(db, "shipment"), {
+          name: currentShipmentName || "Nuevo envío",
+          cost: currentShipmentCost,
+        });
+
+        setShipments((prevShipments) => [
+          ...prevShipments,
+          {
+            id: newShipmentRef.id,
+            name: currentShipmentName,
+            cost: currentShipmentCost,
+          },
+        ]);
+      }
+
+      clearModalShipment();
+      setForceUpdate((prev) => !prev);
+    } catch (error) {
+      console.error("Error al actualizar/crear el envío:", error);
+    }
   };
 
-  useEffect(() => {
-    const shipmentDocRef = doc(db, "shipment", "qSfk5z8oN9Lfdr89fWfY");
-    getDoc(shipmentDocRef)
-      .then((doc) => {
-        if (doc.exists()) {
-          const shipmentData = doc.data();
-          setCurrentShipmentCost(shipmentData.cost);
-        } else {
-          console.log("No such document!");
-        }
-      })
-      .catch((error) => {
-        console.error("Error al obtener el costo de envío:", error);
-      });
-  }, []);
-
-  // tenemos 1 solo envio con costo
-  const updateShipment = async () => {
-    updateDoc(doc(db, "shipment", "qSfk5z8oN9Lfdr89fWfY"), {
-      cost: shipmentCost,
-    });
+  const clearModalShipment = () => {
     setOpenModalShipment(false);
+    setCurrentShipmentId("");
+    setCurrentShipmentName("");
+    setCurrentShipmentCost(0);
+  };
+
+  const handleEditClick = (shipment) => {
+    setCurrentShipmentId(shipment.id);
+    setCurrentShipmentName(shipment.name);
+    setCurrentShipmentCost(shipment.cost);
+    setOpenModalShipment(true);
   };
 
   useEffect(() => {
@@ -146,30 +188,78 @@ const Dashboard = () => {
   return (
     <div>
       <Box style={{ display: "flex", justifyContent: "flex-end", gap: "5px" }}>
-        <Button variant="contained" onClick={() => setOpenModalShipment(true)}>
-          Costo de envio
-        </Button>
+        <Link to="/dashboard/orders">
+          <Button variant="contained">ordenes de compra</Button>
+        </Link>
 
         <Button variant="contained" onClick={() => setOpenModalCategory(true)}>
           Categorías
+        </Button>
+
+        <Button variant="contained" onClick={() => setOpenModalShipment(true)}>
+          Costo de envio
         </Button>
       </Box>
 
       <Modal
         open={openModalShipment}
-        onClose={handleClose}
+        onClose={clearModalShipment}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Box sx={{ ...style, display: "flex", textAlign: "center" }}>
+        <Box
+          sx={{
+            ...style,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: "10px",
+          }}
+        >
+          <Paper elevation={3} sx={{ padding: "20px", width: "100%" }}>
+            <Typography variant="h6" component="h2" align="center">
+              Retiros registrados
+            </Typography>
+            <div style={{ width: "100%" }}>
+              {shipments.map((shipment) => (
+                <div
+                  key={shipment.id}
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "space-around",
+                    margin: "10px",
+                  }}
+                >
+                  <Typography variant="body2">{shipment.name}</Typography>
+                  <Typography variant="body2">
+                    {getFormatCurrency(parseFloat(shipment.cost))}
+                  </Typography>
+                  <Tooltip title="Quieres editar el retiro?">
+                    <IconButton onClick={() => handleEditClick(shipment)}>
+                      <EditIcon color="primary" />
+                    </IconButton>
+                  </Tooltip>
+                </div>
+              ))}
+            </div>
+          </Paper>
+
+          <TextField
+            label="Nuevo retiro"
+            value={currentShipmentName}
+            onChange={(e) => setCurrentShipmentName(e.target.value)}
+          />
           <TextField
             label="Costo"
-            value={
-              shipmentCost !== null ? shipmentCost : currentShipmentCost || ""
-            }
-            onChange={(e) => setShipmentCost(+e.target.value)}
+            type="number"
+            value={currentShipmentCost}
+            onChange={(e) => setCurrentShipmentCost(e.target.value)}
           />
-          <Button onClick={updateShipment}>Modificar</Button>
+          <Button onClick={updateShipment}>
+            {currentShipmentId ? "Modificar" : "Crear"}
+          </Button>
         </Box>
       </Modal>
 

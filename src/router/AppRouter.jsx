@@ -7,8 +7,10 @@ import ForgotPassword from "../components/pages/forgotPassword/ForgotPassword";
 import Dashboard from "../components/pages/dashboard/Dashboard";
 import ProtectedAdmin from "./ProtectedAdmin";
 import ProtectedUsers from "./ProtectedUsers";
+import Orders from "../components/pages/orders/Orders";
 
 const AppRouter = () => {
+
   return (
     <Routes>
       {/* Users logueados*/}
@@ -24,6 +26,8 @@ const AppRouter = () => {
       <Route element={<ProtectedAdmin />}>
         <Route element={<Navbar />}>
           <Route path="/dashboard" element={<Dashboard />} />
+
+          <Route path="/dashboard/orders" element={<Orders />} />
         </Route>
       </Route>
 

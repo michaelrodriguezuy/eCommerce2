@@ -10,8 +10,9 @@ const ProductsForm = ({
   setProductSelected,
   categories,
 }) => {
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [file, setFile] = useState(null);
 
   const [newProduct, setNewProduct] = useState({
     code: "",
@@ -22,15 +23,12 @@ const ProductsForm = ({
     category: "",
     image: "",
   });
-  const [file, setFile] = useState(null);
 
   const handleImage = async () => {
     setIsLoading(true);
 
     try {
-      let url = await uploadFile(file, (snapshot) => {
-        const progress =
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+      let url = await uploadFile(file, (progress) => {
         setUploadProgress(progress);
       });
 
@@ -40,7 +38,7 @@ const ProductsForm = ({
         setNewProduct({ ...newProduct, image: url });
       }
 
-      setIsLoading(false); //aca se muestra nuevamente el boton de submit
+      setIsLoading(false);
     } catch (error) {
       console.error("Error al cargar la imagen:", error);
       setIsLoading(false);
@@ -150,21 +148,23 @@ const ProductsForm = ({
         {file && (
           <div>
             <div style={{ display: "flex", justifyContent: "center" }}>
-              <Button onClick={handleImage} type="button" disabled={!isLoading}>
+              <Button onClick={handleImage} type="button" disabled={isLoading}>
                 Cargar imagen
               </Button>
             </div>
             <div>
-              <LinearProgress
-                variant="determinate"
-                value={uploadProgress}
-                sx={{ marginBottom: "10px" }}
-              />
+              {isLoading && (
+                <LinearProgress
+                  variant="determinate"
+                  value={uploadProgress}
+                  sx={{ marginBottom: "10px" }}
+                />
+              )}
             </div>
           </div>
         )}
 
-        {file && !isLoading && (
+        {file && !isLoading && uploadProgress === 100 && (
           <Button
             variant="contained"
             type="submit"

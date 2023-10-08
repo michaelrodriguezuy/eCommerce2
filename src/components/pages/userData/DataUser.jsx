@@ -6,11 +6,32 @@ import {
   Paper,
   Table,
   TableBody,
-  TableCell,
   TableContainer,
   TableHead,
   TableRow,
 } from "@mui/material";
+import TableCell, { tableCellClasses } from "@mui/material/TableCell";
+import { styled } from "@mui/material/styles";
+
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  [`&.${tableCellClasses.head}`]: {
+    backgroundColor: theme.palette.common.black,
+    color: theme.palette.common.white,
+  },
+  [`&.${tableCellClasses.body}`]: {
+    fontSize: 14,
+  },
+}));
+
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  "&:nth-of-type(odd)": {
+    backgroundColor: theme.palette.action.hover,
+  },
+  // hide last border
+  "&:last-child td, &:last-child th": {
+    border: 0,
+  },
+}));
 
 const DataUser = () => {
   const [myDataUser, setMyDataUser] = useState({});
@@ -33,38 +54,27 @@ const DataUser = () => {
 
   return (
     <>
-      <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+      
+
+      <TableContainer component={Paper} style={{ marginTop: "5px" }}>
+        <Table sx={{ minWidth: 650 }} aria-label="customized table">
           <TableHead>
             <TableRow>
-              <TableCell align="left">Nombre</TableCell>
-              <TableCell align="left">Apellido</TableCell>
-              <TableCell align="center">Telefono</TableCell>
-              <TableCell align="left">Codigo postal</TableCell>              
-              <TableCell align="center">Email</TableCell>
+              <StyledTableCell align="left">Nombre</StyledTableCell>
+              <StyledTableCell align="left">Apellido</StyledTableCell>
+              <StyledTableCell align="left">Email</StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            <TableRow
-              key={0}
-              sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-            >
-              <TableCell component="th" scope="row" align="left">
+            <StyledTableRow key={0}>
+              <StyledTableCell component="th" scope="row">
                 {myDataUser.name}
-              </TableCell>
-              <TableCell component="th" scope="row" align="left">
+              </StyledTableCell>
+              <StyledTableCell align="left">
                 {myDataUser.lastname}
-              </TableCell>
-              <TableCell component="th" scope="row" align="center">
-                {myDataUser.phone}
-              </TableCell>
-              <TableCell component="th" scope="row" align="center">
-                {myDataUser.postalCode}
-              </TableCell>
-              <TableCell component="th" scope="row" align="center">
-                {user.email}
-              </TableCell>
-            </TableRow>
+              </StyledTableCell>
+              <StyledTableCell align="left">{user.email}</StyledTableCell>
+            </StyledTableRow>
           </TableBody>
         </Table>
       </TableContainer>

@@ -19,6 +19,9 @@ import DashboardIcon from "@mui/icons-material/Dashboard";
 import { menuItems } from "../../../router/navigation";
 import { logout } from "../../../fireBaseConfig";
 import { AuthContext } from "../../../context/AuthContext";
+import ShoppingCartCheckoutIcon from "@mui/icons-material/ShoppingCartCheckout";
+import { CartContext } from "../../../context/CartContext";
+import { Badge } from "@mui/material";
 
 //import Img from "../../../assets/logo/football-sin-fondo.png";
 
@@ -27,6 +30,8 @@ const drawerWidth = 200;
 function Navbar(props) {
   const rolAdmin = import.meta.env.VITE_ROLADMIN;
   const { logoutContext, user } = useContext(AuthContext);
+
+  const { getTotalItems } = useContext(CartContext);
 
   const { window } = props;
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -65,6 +70,22 @@ function Navbar(props) {
             </Link>
           );
         })}
+        <Link key="cart" to="/cart">
+          <ListItem disablePadding>
+            <ListItemButton>
+              <ListItemIcon>
+      
+              <Badge badgeContent={getTotalItems()} color="info">
+                <ShoppingCartCheckoutIcon sx={{ color: "whitesmoke" }} />
+      
+              </Badge>
+        
+              </ListItemIcon>
+              <ListItemText primary={"Carrito"} sx={{ color: "whitesmoke" }} />
+            </ListItemButton>
+          </ListItem>
+        </Link>        
+
         {user.rol === rolAdmin && (
           <Link to="/dashboard">
             <ListItem disablePadding>

@@ -9,11 +9,12 @@ import { Button, IconButton, Tooltip, styled } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { deleteDoc, doc } from "firebase/firestore";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import ProductsForm from "./ProductsForm";
 import { db } from "../../../fireBaseConfig";
+import { CartContext } from "../../../context/CartContext";
 
 const style = {
   position: "absolute",
@@ -51,6 +52,8 @@ const ProductsList = ({ products, categories, setIsChange }) => {
 
   const [orderBy, setOrderBy] = useState("");
   const [orderDirection, setOrderDirection] = useState("asc");
+
+  const { getFormatCurrency } = useContext(CartContext);
 
   const deleteProduct = (id) => {
     deleteDoc(doc(db, "products", id));
@@ -100,7 +103,7 @@ const ProductsList = ({ products, categories, setIsChange }) => {
   return (
     <div>
       <Button variant="contained" onClick={() => handleOpen(null)}>
-        Agregar nuevo
+        Agregar producto
       </Button>
       <TableContainer component={Paper} style={{ marginTop: "5px" }}>
         <Table sx={{ minWidth: 650 }} aria-label="customized table">
@@ -156,7 +159,7 @@ const ProductsList = ({ products, categories, setIsChange }) => {
                 </StyledTableCell>
                 <StyledTableCell align="left">{product.title}</StyledTableCell>
                 <StyledTableCell align="center">
-                  {product.unit_price}
+                  {getFormatCurrency(product.unit_price)}
                 </StyledTableCell>
                 <StyledTableCell align="center">
                   {product.stock}
