@@ -231,8 +231,8 @@ const Checkout = () => {
 
     try {
       let response = await axios.post(
-        //  "https://e-commerce-personal-backend-q6f9ku4xl-michaelrodriguezuy.vercel.app/create_preference",
-        "https://backecommerce2-8ylb78qex-michaelrodriguezuy.vercel.app/create_preference",
+        //"http://localhost:8080/create_preference",
+        "https://backecommerce2-8e9bvvgtu-michaelrodriguezuy.vercel.app/create_preference",
         {
           items: items,
           shipment_cost: parseFloat(shipmentCost),
@@ -570,9 +570,6 @@ const Checkout = () => {
         <>
           {paramValue === "approved" ? (
             (console.log("orderId: " + orderId),
-
-
-
             (confetti({
               zindex: 999,
               particleCount: 100, //cantidad de papelitos
