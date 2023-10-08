@@ -30,9 +30,7 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const handleClickShowPassword = () => setShowPassword(!showPassword);
-
-  const idArticuloRedirigido = localStorage.getItem("originalArticleId");
-
+  
   let initialValues = {
     email: "",
     password: "",
