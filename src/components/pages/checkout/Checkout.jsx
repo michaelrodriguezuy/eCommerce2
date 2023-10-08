@@ -121,6 +121,7 @@ const Checkout = () => {
     let order = JSON.parse(localStorage.getItem("order"));
     if (paramValue === "approved") {
       let ordersCollection = collection(db, "orders");
+      console.log("paramValue "+ paramValue)
 
       try {
         addDoc(ordersCollection, { ...order, date: serverTimestamp() }).then(
@@ -568,6 +569,9 @@ const Checkout = () => {
       ) : (
         <>
           {paramValue === "approved" ? (
+
+          console.log("orderId: "+ orderId)
+
             (confetti({
               zindex: 999,
               particleCount: 100, //cantidad de papelitos
