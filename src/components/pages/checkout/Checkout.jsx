@@ -227,7 +227,7 @@ const Checkout = () => {
       };
     });
 
-    console.log("Enviando solicitud al servidor...");
+    console.log("Enviando solicitud al server...");
     // "https://ecommerce-back.uy/create_preference",
     // "http://localhost:8080/create_preference",
 
