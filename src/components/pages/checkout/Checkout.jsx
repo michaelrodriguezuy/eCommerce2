@@ -233,7 +233,7 @@ const Checkout = () => {
 
     try {
       let response = await axios.post(
-        "https://backecommerce2.vercel.app/",
+        "https://backecommerce2.vercel.app/create_preference",
         {
           items: items,
           shipment_cost: parseFloat(shipmentCost),
