@@ -14,18 +14,25 @@
     <title>eCommerce</title>
   </head>
   <body>
-    <!-- <script>
-      // Obtiene la URL del documento anterior
-      const referrer = document.referrer;
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Obtiene la URL del documento anterior (referer)
+        const referrer = document.referrer;
 
-      // Si la URL del documento anterior no está vacía
-      if (referrer) {        
-        localStorage.setItem("originalArticleId", referrer);
-      } else {
-        localStorage.setItem("originalArticleId", "http://localhost:5173/");
-      }
+        // Si hay referer (página proviene de otra), guarda el articleId en localStorage
+        if (referrer) {
+          const articleId = window.location.pathname.split("/itemDetail/")[1];
+          if (articleId) {
+            localStorage.setItem("originalArticleId", articleId);
+          }
+        } else {
+          // Si no hay referer, limpia el localStorage
+          console.log("Borrando originalArticleId");
+          localStorage.removeItem("originalArticleId");
+        }
+      });
+    </script>
 
-    </script> -->
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

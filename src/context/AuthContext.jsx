@@ -19,15 +19,13 @@ const AuthContextComponent = ({ children }) => {
 
   const logoutContext = () => {
     setUser({});
-    setIsLogged(false);
-
-    localStorage.clear();
+    setIsLogged(false);  
 
     //en realidad quiero actualizar la pagina cart.jsx
-    history.go(0); //este tiene el mismo efecto que windows.location.reload(), se ve el refresco de la pagina login
-
-    //pero no funciona, entonces uso window.location.reload()
-    //window.location.reload(); //CON ESTE ANDA
+    history.go(0) 
+    //este tiene el mismo efecto que windows.location.reload(), se ve el refresco de la 
+    localStorage.clear();    
+    localStorage.removeItem("originalArticleId");
   };
 
   const sessionTimeout = 120000; // 120000 -> 2 minutos

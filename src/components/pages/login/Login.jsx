@@ -30,7 +30,9 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const handleClickShowPassword = () => setShowPassword(!showPassword);
-  
+
+  const idArticuloRedirigido = localStorage.getItem("originalArticleId");
+
   let initialValues = {
     email: "",
     password: "",
@@ -67,8 +69,12 @@ const Login = () => {
 
         handleLogin(finalyUser);
 
-        // navigate(idArticuloRedirigido || "/");
-        navigate("/");
+        if (idArticuloRedirigido) {
+          navigate(`/itemDetail/${idArticuloRedirigido}`);
+        } else {
+          navigate("/");
+        }
+
       } else {
         Swal.fire({
           icon: "error",
@@ -95,26 +101,24 @@ const Login = () => {
 
       handleLogin(finalyUser);
 
-      // ahora quiero registrar este usuario en la colección de users
       try {
         await registerUserGoogle(finalyUser);
       } catch (error) {
         console.log(error);
       }
 
-      // navigate(idArticuloRedirigido || "/");
-      navigate("/");
+      if (idArticuloRedirigido) {
+        navigate(`/itemDetail/${idArticuloRedirigido}`);
+      } else {
+        navigate("/");
+      }
+
     } catch (error) {
       console.log(error);
     }
   };
 
-  //metodo para registrar el usuario que se logueo por google en la colección de users
   const registerUserGoogle = async (user) => {
-    // no quiero que me guarde un nuevo ID, ya traigo el ID de google
-
-    // tengo que preguntar si ya no existe un usuario con ese ID
-
     const userCollection = collection(db, "users");
     const userRef = doc(userCollection, user.id);
     const userDoc = await getDoc(userRef);

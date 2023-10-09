@@ -228,11 +228,12 @@ const Checkout = () => {
     });
 
     console.log("Enviando solicitud al servidor...");
+    // "https://ecommerce-back.uy/create_preference",
+    // "http://localhost:8080/create_preference",
 
     try {
       let response = await axios.post(
-        //"http://localhost:8080/create_preference",
-        "https://backecommerce2-crlvcdaye-michaelrodriguezuy.vercel.app/create_preference",
+        "https://backecommerce2.vercel.app/",
         {
           items: items,
           shipment_cost: parseFloat(shipmentCost),

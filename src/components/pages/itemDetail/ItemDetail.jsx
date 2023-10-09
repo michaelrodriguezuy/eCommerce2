@@ -43,6 +43,11 @@ const ItemDetail = () => {
       });
     };
     getProduct();
+
+    //si en localStorage existe originalArticleId, lo elimino
+    if (localStorage.getItem("originalArticleId")) {
+      localStorage.removeItem("originalArticleId");
+    }
   }, [id]);
 
   const sumar = () => {
