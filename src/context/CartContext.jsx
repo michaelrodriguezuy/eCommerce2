@@ -113,7 +113,6 @@ const CartContextComponent = ({ children }) => {
     return laFecha;
   }
 
-
   let data = {
     cart,
     addItem,

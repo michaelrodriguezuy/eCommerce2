@@ -19,7 +19,8 @@ import DashboardIcon from "@mui/icons-material/Dashboard";
 import { menuItems } from "../../../router/navigation";
 import { logout } from "../../../fireBaseConfig";
 import { AuthContext } from "../../../context/AuthContext";
-import ShoppingCartCheckoutIcon from "@mui/icons-material/ShoppingCartCheckout";
+// import ShoppingCartCheckoutIcon from "@mui/icons-material/ShoppingCartCheckout";
+import LocalGroceryStoreIcon from "@mui/icons-material/LocalGroceryStore";
 import { CartContext } from "../../../context/CartContext";
 import { Badge } from "@mui/material";
 
@@ -32,7 +33,6 @@ function Navbar(props) {
   const { logoutContext, user } = useContext(AuthContext);
 
   const { getTotalItems } = useContext(CartContext);
-
   const { window } = props;
   const [mobileOpen, setMobileOpen] = useState(false);
   const navigate = useNavigate();
@@ -70,21 +70,6 @@ function Navbar(props) {
             </Link>
           );
         })}
-        <Link key="cart" to="/cart">
-          <ListItem disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
-      
-              <Badge badgeContent={getTotalItems()} color="info">
-                <ShoppingCartCheckoutIcon sx={{ color: "whitesmoke" }} />
-      
-              </Badge>
-        
-              </ListItemIcon>
-              <ListItemText primary={"Carrito"} sx={{ color: "whitesmoke" }} />
-            </ListItemButton>
-          </ListItem>
-        </Link>        
 
         {user.rol === rolAdmin && (
           <Link to="/dashboard">
@@ -134,14 +119,31 @@ function Navbar(props) {
           <Link to="/" style={{ color: "whitesmoke" }}>
             Todo para el deporte infantil
           </Link>
-          <IconButton
-            color="secondary.primary"
-            aria-label="open drawer"
-            edge="start"
-            onClick={handleDrawerToggle}
+
+          <Box
+            sx={{
+              gap: "40px",
+              display: "flex",
+              justifyContent: "space-between",
+            }}
           >
-            <MenuIcon color="secondary.primary" />
-          </IconButton>
+            <Link key="cart" to="/cart">
+              <IconButton>
+                <Badge badgeContent={getTotalItems()} color="info">
+                  <LocalGroceryStoreIcon sx={{ color: "whitesmoke" }} />
+                </Badge>
+              </IconButton>
+            </Link>
+
+            <IconButton
+              color="secondary.primary"
+              aria-label="open drawer"
+              edge="start"
+              onClick={handleDrawerToggle}
+            >
+              <MenuIcon color="secondary.primary" />
+            </IconButton>
+          </Box>
         </Toolbar>
       </AppBar>
       <Box component="nav" aria-label="mailbox folders">

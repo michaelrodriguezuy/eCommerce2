@@ -28,11 +28,11 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 }));
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
-  "&:nth-of-type(odd)": {
+  '&:nth-of-type(odd)': {
     backgroundColor: theme.palette.action.hover,
   },
   // hide last border
-  "&:last-child td, &:last-child th": {
+  '&:last-child td, &:last-child th': {
     border: 0,
   },
 }));
@@ -61,35 +61,6 @@ const UserOrders = () => {
       .catch((error) => console.log(error));
   }, [user.email]);
 
-  // function laFecha(date) {
-  //   if (!date) {
-  //     return "Fecha no disponible";
-  //   }
-
-  //   const laFecha =
-  //     date instanceof Date
-  //       ? date.toLocaleString("es-ES", {
-  //           day: "2-digit",
-  //           month: "2-digit",
-  //           year: "numeric",
-  //         })
-  //       : date.toDate().toLocaleString("es-ES", {
-  //           day: "2-digit",
-  //           month: "2-digit",
-  //           year: "numeric",
-  //         });
-
-  //   return laFecha;
-  // }
-
-  // const formatCurrency = (price) => {
-  //   const formattedPrice = price.toLocaleString("es-UY", {
-  //     style: "currency",
-  //     currency: "UYU",
-  //   });
-  //   return formattedPrice;
-  // };
-
   function caluclarSubtotal() {
     let subtotal = 0;
     myOrders.forEach((order) => {
@@ -114,87 +85,94 @@ const UserOrders = () => {
       {myOrders
         .sort((a, b) => b.date.toMillis() - a.date.toMillis())
         .map((order) => (
-          <TableContainer
-            key={order.id}
-            component={Paper}
-            style={{ marginTop: "30px", marginBottom: "50px" }}
-          >
-            <Table sx={{ minWidth: 650 }} aria-label="customized table">
-              <TableHead>
-                <TableRow>
-                  <StyledTableCell colSpan={7}>
-                    <Typography variant="h7">
-                      Número de orden: {order.id}
-                    </Typography>
-                  </StyledTableCell>
-                </TableRow>
+          <>
+            <TableContainer
+              key={order.id}
+              component={Paper}
+              style={{
+                marginTop: "30px",
+                marginBottom: "50px",
+                border: "2px solid #ccc",
+                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+              }}
+            >
+                      <Typography variant="h5">
+                        Número de orden: {order.id}
+                      </Typography>
+              <Table sx={{ minWidth: 650 }} aria-label="customized table">
+                <TableHead>                 
 
-                <TableRow>
-                  <StyledTableCell align="left">Fecha</StyledTableCell>
-                  <StyledTableCell align="center">Arículo</StyledTableCell>
-                  <StyledTableCell align="center">Precio</StyledTableCell>
-                  <StyledTableCell align="center">Cantidad</StyledTableCell>
-                  <StyledTableCell align="center">SubTotal</StyledTableCell>
-                  <StyledTableCell align="center">Envío</StyledTableCell>
-                  <StyledTableCell align="center">Total</StyledTableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                <StyledTableRow key={order.id}>
-                  <StyledTableCell component="th" scope="row">
-                    <span style={{ fontWeight: "bold" }}>
-                      {getDateShort(order.date)}
-                    </span>
-                  </StyledTableCell>
-                  <StyledTableCell align="left"></StyledTableCell>
-                  <StyledTableCell align="left"></StyledTableCell>
-                  <StyledTableCell align="left"></StyledTableCell>
-                  <StyledTableCell align="center"></StyledTableCell>
-                  <StyledTableCell align="center"></StyledTableCell>
-                  <StyledTableCell align="center"></StyledTableCell>
-                </StyledTableRow>
-                {order?.items?.map((product) => (
-                  <StyledTableRow key={product.id}>
-                    <StyledTableCell align="left">{}</StyledTableCell>
-                    <StyledTableCell component="th" scope="row" align="center">
-                      {product.title}
+                  <TableRow >
+                    <StyledTableCell align="left">Fecha</StyledTableCell>
+                    <StyledTableCell align="center">Arículo</StyledTableCell>
+                    <StyledTableCell align="center">Precio</StyledTableCell>
+                    <StyledTableCell align="center">Cantidad</StyledTableCell>
+                    <StyledTableCell align="center">SubTotal</StyledTableCell>
+                    <StyledTableCell align="center">Envío</StyledTableCell>
+                    <StyledTableCell align="center">Total</StyledTableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  <StyledTableRow key={order.id}>
+                    <StyledTableCell component="th" scope="row">
+                      <span style={{ fontWeight: "bold" }}>
+                        {getDateShort(order.date)}
+                      </span>
                     </StyledTableCell>
-                    <StyledTableCell align="center">
-                      {getFormatCurrency(product.unit_price)}
-                    </StyledTableCell>
-                    <StyledTableCell align="center">
-                      {product.quantity}
-                    </StyledTableCell>
-                    <StyledTableCell align="left">{}</StyledTableCell>
-                    <StyledTableCell align="left">{}</StyledTableCell>
-                    <StyledTableCell align="left">{}</StyledTableCell>
+                    <StyledTableCell align="left"></StyledTableCell>
+                    <StyledTableCell align="left"></StyledTableCell>
+                    <StyledTableCell align="left"></StyledTableCell>
+                    <StyledTableCell align="center"></StyledTableCell>
+                    <StyledTableCell align="center"></StyledTableCell>
+                    <StyledTableCell align="center"></StyledTableCell>
                   </StyledTableRow>
-                ))}
-              </TableBody>
-              <TableFooter
-                colSpan={7}
-                style={{ backgroundColor: "lightsteelblue" }}
-              >
-                <StyledTableRow key={order.id}>
-                  <StyledTableCell align="left">{}</StyledTableCell>
-                  <StyledTableCell align="left">{}</StyledTableCell>
-                  <StyledTableCell align="left">{}</StyledTableCell>
-                  <StyledTableCell align="left">{}</StyledTableCell>
-                  <StyledTableCell align="center">
-                    {getFormatCurrency(caluclarSubtotal())}
-                  </StyledTableCell>
-                  <StyledTableCell align="center">
-                    {getFormatCurrency(order.shipmentCost)}
-                  </StyledTableCell>
-                  <StyledTableCell align="center">
-                    <span style={{ fontWeight: "bold" }}>
-                      {getFormatCurrency(order.total)}
-                    </span>
-                  </StyledTableCell>
-                </StyledTableRow>
-              </TableFooter>
-            </Table>
-          </TableContainer>
+                  {order?.items?.map((product) => (
+                    <StyledTableRow key={product.id}>
+                      <StyledTableCell align="left">{}</StyledTableCell>
+                      <StyledTableCell
+                        component="th"
+                        scope="row"
+                        align="center"
+                      >
+                        {product.title}
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
+                        {getFormatCurrency(product.unit_price)}
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
+                        {product.quantity}
+                      </StyledTableCell>
+                      <StyledTableCell align="left">{}</StyledTableCell>
+                      <StyledTableCell align="left">{}</StyledTableCell>
+                      <StyledTableCell align="left">{}</StyledTableCell>
+                    </StyledTableRow>
+                  ))}
+                </TableBody>
+                <TableFooter
+                  colSpan={7}
+                  style={{ backgroundColor: "lightsteelblue" }}
+                >
+                  <StyledTableRow key={order.id}>
+                    <StyledTableCell align="left">{}</StyledTableCell>
+                    <StyledTableCell align="left">{}</StyledTableCell>
+                    <StyledTableCell align="left">{}</StyledTableCell>
+                    <StyledTableCell align="left">{}</StyledTableCell>
+                    <StyledTableCell align="center">
+                      {getFormatCurrency(caluclarSubtotal())}
+                    </StyledTableCell>
+                    <StyledTableCell align="center">
+                      {getFormatCurrency(order.shipmentCost)}
+                    </StyledTableCell>
+                    <StyledTableCell align="center">
+                      <span style={{ fontWeight: "bold" }}>
+                        {getFormatCurrency(order.total)}
+                      </span>
+                    </StyledTableCell>
+                  </StyledTableRow>
+                </TableFooter>
+              </Table>
+            </TableContainer>
+          </>
         ))}
     </div>
   );

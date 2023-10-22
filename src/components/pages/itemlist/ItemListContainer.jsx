@@ -15,12 +15,14 @@ import {
   Typography,
 } from "@mui/material";
 import { CartContext } from "../../../context/CartContext";
-
+import { Pagination } from "@mui/material";
 
 const ItemListContainer = () => {
   const [products, setProducts] = useState([]);
-
   const { getFormatCurrency } = useContext(CartContext);
+  const itemsPerPage = 9;
+  const pageCount = Math.ceil(products.length / itemsPerPage);
+  const [currentPage, setCurrentPage] = useState(0);
 
   useEffect(() => {
     let refCollection = collection(db, "products");
@@ -35,7 +37,10 @@ const ItemListContainer = () => {
       .catch((error) => console.log(error));
   }, []);
 
-  
+  const displayedProducts = products.slice(
+    currentPage * itemsPerPage,
+    (currentPage + 1) * itemsPerPage
+  );
 
   return (
     <>
@@ -45,10 +50,23 @@ const ItemListContainer = () => {
         </Typography>
       </Paper>
 
-      <Grid container spacing={3} justifyContent="center">
-        {products.map((product) => (
-          <Grid item key={product.id} xs={12} sm={6} md={4} lg={3}>
-            <Card sx={{ maxWidth: 345 }}>
+      <Grid container spacing={3} justifyContent="center" sx={{ marginX: -2 }}>
+        {displayedProducts.map((product) => (
+          <Grid
+            item
+            key={product.id}
+            xs={12}
+            sm={6}
+            md={4}
+            lg={3}
+            sx={{
+              marginX: 2,
+              mb: 4,              
+              display: "flex",
+              justifyContent: "center",
+            }}
+          >
+            <Card sx={{ width: 300 }}>
               <Link to={`/itemDetail/${product.id}`}>
                 <CardActionArea>
                   <CardMedia
@@ -60,10 +78,7 @@ const ItemListContainer = () => {
                   <CardContent>
                     <Typography gutterBottom variant="h5" component="div">
                       {product.title}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {product.description}
-                    </Typography>
+                    </Typography>                    
                   </CardContent>
                 </CardActionArea>
               </Link>
@@ -81,14 +96,26 @@ const ItemListContainer = () => {
                 >
                   {getFormatCurrency(product.unit_price)}
                 </Button>
-                {/* <IconButton aria-label="add to favorites">
-                  <AddShoppingCartIcon />
-                </IconButton> */}
               </CardActions>
             </Card>
           </Grid>
         ))}
       </Grid>
+      <Pagination
+        count={pageCount}
+        page={currentPage + 1}
+        onChange={(event, page) => setCurrentPage(page - 1)}
+        shape="rounded"
+        showFirstButton
+        showLastButton
+        color="primary"
+        size="large"
+        variant="outlined"
+        boundaryCount={2}
+        siblingCount={0}
+        disabled={pageCount === 1}
+        sx={{ marginTop: 3, display: "flex", justifyContent: "center" }}
+      />
     </>
   );
 };

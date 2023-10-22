@@ -82,18 +82,21 @@ const Cart = () => {
         <Typography variant="h4" component="h4">
           Mi compra
         </Typography>
-        <Tooltip title="Vaciar carrito">
-          <IconButton onClick={handlerClearCart}>
-            <RemoveShoppingCartIcon color="primary" />
-          </IconButton>
-        </Tooltip>
+
+        {cart.length > 0 && (
+          <Tooltip title="Vaciar carrito">
+            <IconButton onClick={handlerClearCart}>
+              <RemoveShoppingCartIcon color="primary" />
+            </IconButton>
+          </Tooltip>
+        )}
       </Paper>
 
       <TableContainer
         component={Paper}
         style={{ marginTop: "30px", marginBottom: "50px" }}
       >
-        <Card sx={{ minWidth: 275 }}>
+        <Card sx={{ minWidth: 275, overflowX: "auto" }}>
           <CardContent>
             <Table sx={{ minWidth: 650 }} aria-label="customized table">
               <TableHead>
@@ -155,13 +158,18 @@ const Cart = () => {
         sx={{
           display: "flex",
           justifyContent: "space-around",
+          flexDirection:"row",
           alignItems: "center",
           padding: "20px",
           textAlign: "center",
           mb: 3,
         }}
       >
-        <Typography variant="h3" component="h3">
+        <Typography variant="h3" component="h3" sx={{
+      alignSelf: "center", // Centrar verticalmente el texto
+      lineHeight: "1", // Ajuste del espacio entre líneas
+      display: "flex", // Asegura que la configuración de flexbox se aplique a nivel de línea
+    }}>
           Total: {getFormatCurrency(total)}
         </Typography>
 

@@ -16,12 +16,13 @@ const AppRouter = () => {
       {/* Users logueados*/}
       <Route element={<ProtectedUsers />}>
         <Route element={<Navbar />}>
-          {routes.map(({ id, path, Element }) => (
-            <Route key={id} path={path} element={<Element />} />
-          ))}
+          <Route element={<Footer />}>
+            {routes.map(({ id, path, Element }) => (
+              <Route key={id} path={path} element={<Element />} />
+            ))}
+          </Route>
         </Route>
       </Route>
-      {/* <Footer /> */}
 
       {/* Admin logueados*/}
       <Route element={<ProtectedAdmin />}>
