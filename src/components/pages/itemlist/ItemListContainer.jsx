@@ -61,7 +61,7 @@ const ItemListContainer = () => {
             lg={3}
             sx={{
               marginX: 2,
-              mb: 4,              
+              mb: 4,
               display: "flex",
               justifyContent: "center",
             }}
@@ -78,7 +78,7 @@ const ItemListContainer = () => {
                   <CardContent>
                     <Typography gutterBottom variant="h5" component="div">
                       {product.title}
-                    </Typography>                    
+                    </Typography>
                   </CardContent>
                 </CardActionArea>
               </Link>
@@ -114,7 +114,12 @@ const ItemListContainer = () => {
         boundaryCount={2}
         siblingCount={0}
         disabled={pageCount === 1}
-        sx={{ marginTop: 3, display: "flex", justifyContent: "center" }}
+        sx={{
+          marginTop: 3,
+          display: "flex",
+          justifyContent: "center",
+          marginBottom: "80px",
+        }}
       />
     </>
   );
