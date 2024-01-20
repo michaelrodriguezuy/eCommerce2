@@ -101,7 +101,7 @@ const Cart = () => {
             <Table sx={{ minWidth: 650 }} aria-label="customized table">
               <TableHead>
                 <TableRow>
-                  <StyledTableCell align="center">Arículo</StyledTableCell>
+                  <StyledTableCell align="center">Artículo</StyledTableCell>
                   <StyledTableCell align="center">
                     Precio unitario
                   </StyledTableCell>
@@ -166,9 +166,9 @@ const Cart = () => {
         }}
       >
         <Typography variant="h3" component="h3" sx={{
-      alignSelf: "center", // Centrar verticalmente el texto
-      lineHeight: "1", // Ajuste del espacio entre líneas
-      display: "flex", // Asegura que la configuración de flexbox se aplique a nivel de línea
+      alignSelf: "center", 
+      lineHeight: "1", 
+      display: "flex", 
     }}>
           Total: {getFormatCurrency(total)}
         </Typography>

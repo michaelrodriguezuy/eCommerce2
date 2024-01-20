@@ -10,7 +10,7 @@ function App() {
         <CartContextComponent>
           <AppRouter />
         </CartContextComponent>
-      </AuthContextComponent>
+      </AuthContextComponent>      
     </BrowserRouter>
   );
 }

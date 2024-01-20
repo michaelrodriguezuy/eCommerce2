@@ -232,7 +232,7 @@ const Checkout = () => {
     
     try {
       let response = await axios.post(
-        "http://localhost:8080/create_preference",
+        "http://localhost:8081/create_preference",
         // "https://backecommerce2-mct5rng8v-michaelrodriguezuy.vercel.app/create_preference",
         {
           items: items,
@@ -252,7 +252,7 @@ const Checkout = () => {
   };
 
   return (
-    <div>
+    <div style={{ marginBottom: "100px" }}> 
       {!orderId ? (
         <>
           <Paper elevation={3} style={{ padding: 16, marginBottom: 16 }}>
@@ -556,7 +556,6 @@ const Checkout = () => {
               </Grid>
             </Grid>
           </Paper>
-
           <Button
             onClick={formik.handleSubmit}
             variant="contained"
@@ -566,6 +565,7 @@ const Checkout = () => {
           >
             Seleccione método de pago
           </Button>
+
         </>
       ) : (
         <>
@@ -616,7 +616,7 @@ const Checkout = () => {
               variant="h5"
               style={{ color: "red", fontWeight: "bold" }}
             >
-              Ocurrió algun inconveniente con tu compra, ponte en contacto y lo
+              Ocurrió algun inconveniente con tu compra, ponete en contacto y lo
               vamos a solucionar
             </Typography>
           )}

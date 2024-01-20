@@ -61,14 +61,12 @@ const UserOrders = () => {
       .catch((error) => console.log(error));
   }, [user.email]);
 
-  function caluclarSubtotal() {
-    let subtotal = 0;
-    myOrders.forEach((order) => {
+  const calcularSubtotal = (order) => {
+    let subtotal = 0;    
       order.items.forEach((item) => {
         subtotal += item.unit_price * item.quantity;
       });
-    });
-    return subtotal;
+      return subtotal;
   }
 
   return (
@@ -104,7 +102,7 @@ const UserOrders = () => {
 
                   <TableRow >
                     <StyledTableCell align="left">Fecha</StyledTableCell>
-                    <StyledTableCell align="center">Arículo</StyledTableCell>
+                    <StyledTableCell align="center">Artículo</StyledTableCell>
                     <StyledTableCell align="center">Precio</StyledTableCell>
                     <StyledTableCell align="center">Cantidad</StyledTableCell>
                     <StyledTableCell align="center">SubTotal</StyledTableCell>
@@ -158,7 +156,7 @@ const UserOrders = () => {
                     <StyledTableCell align="left">{}</StyledTableCell>
                     <StyledTableCell align="left">{}</StyledTableCell>
                     <StyledTableCell align="center">
-                      {getFormatCurrency(caluclarSubtotal())}
+                      {getFormatCurrency(calcularSubtotal(order))}
                     </StyledTableCell>
                     <StyledTableCell align="center">
                       {getFormatCurrency(order.shipmentCost)}
