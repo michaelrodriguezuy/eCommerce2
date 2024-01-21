@@ -227,14 +227,11 @@ const Checkout = () => {
       };
     });
 
-    console.log("Enviando solicitud al server...");
-    // "https://ecommerce-back.uy/create_preference",
-    
+    console.log("Enviando solicitud al server...");   
     try {
       let response = await axios.post(
-        // "http://localhost:8081/create_preference",
-        // "https://backecommerce2-mct5rng8v-michaelrodriguezuy.vercel.app/create_preference",        
-        "https://backecommerce2.vercel.app/create_preference",
+        // "http://localhost:8081/create_preference",        
+        "https://back-seven-plum.vercel.app/create_preference",
         {
           items: items,
           shipment_cost: parseFloat(shipmentCost),
