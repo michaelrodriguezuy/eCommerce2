@@ -36,7 +36,17 @@ export const login = async ({ email, password }) => {
 
 //LOGOUT
 export const logout = () => {
-    signOut(auth)
+    return new Promise((resolve, reject) => {
+        try {
+            signOut(auth).then(() => {
+                resolve();
+            }).catch((error) => {
+                reject(error);
+            });
+        } catch (error) {
+            reject(error);
+        }
+    });
 }
 
 //login con google

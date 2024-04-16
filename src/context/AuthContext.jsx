@@ -1,8 +1,12 @@
 import { createContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export const AuthContext = createContext();
 
 const AuthContextComponent = ({ children }) => {
+
+  const navigate = useNavigate();
+
   const [user, setUser] = useState(
     JSON.parse(localStorage.getItem("userInfo")) || {}
   );
@@ -25,7 +29,8 @@ const AuthContextComponent = ({ children }) => {
     history.go(0) 
     //este tiene el mismo efecto que windows.location.reload(), se ve el refresco de la 
     localStorage.clear();    
-    localStorage.removeItem("originalArticleId");
+    // localStorage.removeItem("originalArticleId");
+    
   };
 
   const sessionTimeout = 120000; // 120000 -> 2 minutos

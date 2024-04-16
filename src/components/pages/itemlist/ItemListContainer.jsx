@@ -13,9 +13,13 @@ import {
   Grid,
   Paper,
   Typography,
+  Pagination,
+  Select,
+  MenuItem,
+  TextField,
 } from "@mui/material";
+
 import { CartContext } from "../../../context/CartContext";
-import { Pagination } from "@mui/material";
 
 const ItemListContainer = () => {
   const [products, setProducts] = useState([]);
@@ -24,7 +28,20 @@ const ItemListContainer = () => {
   const pageCount = Math.ceil(products.length / itemsPerPage);
   const [currentPage, setCurrentPage] = useState(0);
 
+  const [searchInput, setSearchInput] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("todos");
+  const [categories, setCategories] = useState([]);
+
   useEffect(() => {
+    let refCollectionCategories = collection(db, "categories");
+    getDocs(refCollectionCategories).then((res) => {
+      let categoriesList = res.docs.map((doc) => {
+        return { ...doc.data(), id: doc.id };
+      });
+
+      setCategories(categoriesList);
+    });
+
     let refCollection = collection(db, "products");
     getDocs(refCollection)
       .then((res) => {
@@ -37,20 +54,64 @@ const ItemListContainer = () => {
       .catch((error) => console.log(error));
   }, []);
 
-  const displayedProducts = products.slice(
-    currentPage * itemsPerPage,
-    (currentPage + 1) * itemsPerPage
-  );
+  const handleSearchInputChange = (event) => {
+    setSearchInput(event.target.value);
+    setCurrentPage(0);
+  };
+
+  const handleCategoryFilterChange = (event) => {
+    setCategoryFilter(event.target.value);
+    setCurrentPage(0);
+  };
+
+  const displayedProducts = products
+    .filter((product) => {
+      const matchesSearch = product.title
+        .toLowerCase()
+        .includes(searchInput.toLowerCase());
+      const matchesCategory =
+        categoryFilter === "todos" || product.category === categoryFilter;
+      return matchesSearch && matchesCategory;
+    })
+    .slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage);
 
   return (
     <>
-      <Paper elevation={3} sx={{ padding: "20px", textAlign: "center", mb: 3 }}>
-        <Typography variant="h2" component="h3">
-          Tienda
-        </Typography>
+      <Typography variant="h2" component="h3" sx={{ textAlign: "center", marginBottom: 3 }}>
+        Tienda
+      </Typography>
+      <Paper elevation={3} sx={{ padding: "20px", textAlign: "center", maxWidth: 600, margin: "0 auto" }}>
+        <Grid container spacing={2} alignItems="center">
+          <Grid item xs={12} sm={6}>
+            <TextField
+              id="search"
+              label="Buscar artículo"
+              variant="outlined"
+              value={searchInput}
+              onChange={handleSearchInputChange}
+              fullWidth
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <Select
+              id="categoryFilter"
+              value={categoryFilter}
+              onChange={handleCategoryFilterChange}
+              fullWidth
+              variant="outlined"
+            >
+              <MenuItem value="todos">Todos</MenuItem>
+              {categories.map((category) => (
+                <MenuItem key={category.id} value={category.name}>
+                  {category.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </Grid>
+        </Grid>
       </Paper>
 
-      <Grid container spacing={3} justifyContent="center" sx={{ marginX: -2 }}>
+      <Grid container spacing={3} justifyContent="center" sx={{ marginX: -2, marginTop: 3 }}>
         {displayedProducts.map((product) => (
           <Grid
             item

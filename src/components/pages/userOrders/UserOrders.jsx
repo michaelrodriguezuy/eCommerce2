@@ -88,10 +88,13 @@ const UserOrders = () => {
               key={order.id}
               component={Paper}
               style={{
-                marginTop: "30px",
-                marginBottom: "50px",
+                marginTop: "30px",            
+                marginBottom: "50px",    
+                marginLeft: "auto",
+                marginRight: "auto",
                 border: "2px solid #ccc",
                 boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                maxWidth: 800,
               }}
             >
                       <Typography variant="h5">

@@ -23,6 +23,7 @@ import { AuthContext } from "../../../context/AuthContext";
 import LocalGroceryStoreIcon from "@mui/icons-material/LocalGroceryStore";
 import { CartContext } from "../../../context/CartContext";
 import { Badge } from "@mui/material";
+import { Login } from "@mui/icons-material";
 
 //import Img from "../../../assets/logo/football-sin-fondo.png";
 
@@ -30,26 +31,17 @@ const drawerWidth = 200;
 
 function Navbar(props) {
   const rolAdmin = import.meta.env.VITE_ROLADMIN;
-  const { logoutContext, user } = useContext(AuthContext);
+  const {  user, isLogged } = useContext(AuthContext);
 
   const { getTotalItems } = useContext(CartContext);
   const { window } = props;
   const [mobileOpen, setMobileOpen] = useState(false);
-  const navigate = useNavigate();
+
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
 
-  const handleLogout = () => {
-    try {
-      logout();
-      logoutContext();
-      navigate("/login");
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   const drawer = (
     <div>
@@ -71,32 +63,78 @@ function Navbar(props) {
           );
         })}
 
-        {user.rol === rolAdmin && (
-          <Link to="/dashboard">
+        {isLogged && (
+          <>
+            <Link to="/data-user">
+              <ListItem disablePadding>
+                <ListItemButton>
+                  <ListItemIcon>
+                    <LocalGroceryStoreIcon sx={{ color: "whitesmoke" }} />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={"Mis datos"}
+                    sx={{ color: "whitesmoke" }}
+                  />
+                </ListItemButton>
+              </ListItem>
+            </Link>
+
+            <Link to="/user-orders">
+              <ListItem disablePadding>
+                <ListItemButton>
+                  <ListItemIcon>
+                    <LocalGroceryStoreIcon sx={{ color: "whitesmoke" }} />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={"Mis compras"}
+                    sx={{ color: "whitesmoke" }}
+                  />
+                </ListItemButton>
+              </ListItem>
+            </Link>
+            {user.rol === rolAdmin && (
+              <Link to="/dashboard">
+                <ListItem disablePadding>
+                  <ListItemButton>
+                    <ListItemIcon>
+                      <DashboardIcon sx={{ color: "whitesmoke" }} />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={"Dashboard"}
+                      sx={{ color: "whitesmoke" }}
+                    />
+                  </ListItemButton>
+                </ListItem>
+              </Link>
+            )}
+
             <ListItem disablePadding>
-              <ListItemButton>
+              <ListItemButton component={Link} to="/logout">
                 <ListItemIcon>
-                  <DashboardIcon sx={{ color: "whitesmoke" }} />
+                  <LogoutIcon sx={{ color: "whitesmoke" }} />
                 </ListItemIcon>
                 <ListItemText
-                  primary={"Dashboard"}
+                  primary={"Cerrar sesion"}
                   sx={{ color: "whitesmoke" }}
                 />
               </ListItemButton>
             </ListItem>
-          </Link>
+          </>
         )}
-        <ListItem disablePadding>
-          <ListItemButton onClick={handleLogout}>
+        {/* si no hay logueados muestro esto tambien */}
+        {!isLogged && (
+          <ListItem disablePadding>
+          <ListItemButton component={Link} to="/login">
             <ListItemIcon>
-              <LogoutIcon sx={{ color: "whitesmoke" }} />
+              <Login sx={{ color: "whitesmoke" }} />
             </ListItemIcon>
             <ListItemText
-              primary={"Cerrar sesion"}
+              primary={"Iniciar sesion"}
               sx={{ color: "whitesmoke" }}
             />
           </ListItemButton>
         </ListItem>
+          )}
       </List>
     </div>
   );
@@ -127,13 +165,15 @@ function Navbar(props) {
               justifyContent: "space-between",
             }}
           >
-            <Link key="cart" to="/cart">
-              <IconButton>
-                <Badge badgeContent={getTotalItems()} color="info">
-                  <LocalGroceryStoreIcon sx={{ color: "whitesmoke" }} />
-                </Badge>
-              </IconButton>
-            </Link>
+            
+              <Link key="cart" to="/cart">
+                <IconButton>
+                  <Badge badgeContent={getTotalItems()} color="info">
+                    <LocalGroceryStoreIcon sx={{ color: "whitesmoke" }} />
+                  </Badge>
+                </IconButton>
+              </Link>
+            
 
             <IconButton
               color="secondary.primary"

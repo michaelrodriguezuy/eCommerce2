@@ -28,7 +28,7 @@ const ItemDetail = () => {
   let quantity = getQuantityById(id);
   const [product, setProduct] = useState(null);
   const [contador, setContador] = useState(quantity || 1);
-  const {getFormatCurrency } = useContext(CartContext);
+  const { getFormatCurrency } = useContext(CartContext);
 
   useEffect(() => {
     const getProduct = async () => {
@@ -44,10 +44,10 @@ const ItemDetail = () => {
     };
     getProduct();
 
-    //si en localStorage existe originalArticleId, lo elimino
-    if (localStorage.getItem("originalArticleId")) {
-      localStorage.removeItem("originalArticleId");
-    }
+    // //si en localStorage existe originalArticleId, lo elimino
+    // if (localStorage.getItem("originalArticleId")) {
+    //   localStorage.removeItem("originalArticleId");
+    // }
   }, [id]);
 
   const sumar = () => {
@@ -101,7 +101,6 @@ const ItemDetail = () => {
     });
   };
 
-  
   return (
     <>
       <Tooltip title="Volver atras">
@@ -150,12 +149,32 @@ const ItemDetail = () => {
             <Grid item key={product.id} xs={12} sm={8} md={6} lg={4}>
               <Card sx={{ maxWidth: 445 }}>
                 <CardActionArea>
-                  <CardMedia
-                    component="img"
-                    height="280"
-                    image={product.image}
-                    alt={product.title}
-                  />
+                  <div
+                    style={{ display: "flex", gap: "30px", overflowX: "auto" }}
+                  >
+                    {product && (
+                      <>
+                        {Array.isArray(product.image) ? (
+                          product.image.map((image, index) => (
+                            <CardMedia
+                              key={index}
+                              component="img"
+                              height="280"
+                              image={image}
+                              alt={product.title}
+                            />
+                          ))
+                        ) : (
+                          <CardMedia
+                            component="img"
+                            height="280"
+                            image={product.image}
+                            alt={product.title}
+                          />
+                        )}
+                      </>
+                    )}
+                  </div>
                   <CardContent>
                     <Typography gutterBottom variant="h5" component="div">
                       {product.title}

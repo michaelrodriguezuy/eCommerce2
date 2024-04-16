@@ -43,6 +43,9 @@ import confetti from "canvas-confetti";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import StoreIcon from "@mui/icons-material/Store";
 
+
+
+
 const Checkout = () => {
   const { cart, getTotalPrice, clearCart, getFormatCurrency } =
     useContext(CartContext);
@@ -67,6 +70,7 @@ const Checkout = () => {
   const [cities, setCities] = useState([]);
 
   let initialValues = {
+    document: "",
     cp: "",
     address: "",
     phone: "",
@@ -159,6 +163,7 @@ const Checkout = () => {
     }
 
     let order = {
+      document: formik.values.document,
       cp: formik.values.cp,
       address: formik.values.address,
       phone: formik.values.phone,
@@ -227,11 +232,11 @@ const Checkout = () => {
       };
     });
 
-    console.log("Enviando solicitud al server...");   
+    console.log("Enviando solicitud al server...");
     try {
       let response = await axios.post(
-        // "http://localhost:8081/create_preference",        
-        "https://back-seven-plum.vercel.app/create_preference",
+        "http://localhost:8081/create_preference",
+        //"https://back-seven-plum.vercel.app/create_preference",
         {
           items: items,
           shipment_cost: parseFloat(shipmentCost),
@@ -249,11 +254,33 @@ const Checkout = () => {
     }
   };
 
+  const sendEmail = async () => {
+    try {
+      const response = await axios.post('http://localhost:8081/send-email', {
+        to: 'm33agra@hotmail.com',
+        subject: 'Compra realizada en su e-Commerce',
+        text: 'Se ha recibido una nueva compra con el ID: '+ orderId,
+      });
+  
+      console.log(response.data.message); // Mensaje de confirmación del servidor
+    } catch (error) {
+      console.error('Error al enviar el correo electrónico:', error);
+    }
+  };
+
   return (
-    <div style={{ marginBottom: "100px" }}> 
+    <div style={{ marginBottom: "100px" }}>
       {!orderId ? (
         <>
-          <Paper elevation={3} style={{ padding: 16, marginBottom: 16 }}>
+          <Paper
+            elevation={3}
+            style={{
+              padding: 16,
+              marginBottom: 16,
+              maxWidth: 600,
+              margin: "0 auto",
+            }}
+          >
             <Grid container spacing={2}>
               <Grid item xs={12}>
                 <Paper
@@ -265,6 +292,23 @@ const Checkout = () => {
                   </Typography>
                 </Paper>
               </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  name="document"
+                  variant="outlined"
+                  label="Documento"
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  value={formik.values.document}
+                  error={
+                    formik.touched.document && Boolean(formik.errors.document)
+                  }
+                  helperText={formik.touched.document && formik.errors.document}
+                  fullWidth
+                  size="small"
+                />
+              </Grid>
+
               <Grid item xs={12} sm={6}>
                 <TextField
                   name="phone"
@@ -334,14 +378,12 @@ const Checkout = () => {
                 </FormControl>
               </Grid>
             </Grid>
-          </Paper>
 
-          <Paper elevation={3} style={{ padding: 16, marginBottom: 16 }}>
             <Grid container spacing={2}>
               <Grid item xs={12}>
                 <Paper
                   elevation={0}
-                  style={{ background: "#f0f0f0", padding: 8 }}
+                  style={{ background: "#f0f0f0", padding: 8, marginTop: 16 }}
                 >
                   <Typography variant="h7">Detalles de su compra</Typography>
                 </Paper>
@@ -436,20 +478,9 @@ const Checkout = () => {
               </Grid>
             </Grid>
             <Typography variant="h6">
-              Total compra: {getFormatCurrency(total)}
+              Subtotal: {getFormatCurrency(total)}
             </Typography>
-          </Paper>
 
-          <Paper
-            elevation={3}
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              padding: 16,
-              marginBottom: 16,
-            }}
-          >
             <Grid container spacing={2}>
               <Grid item xs={12}>
                 <Paper
@@ -509,35 +540,23 @@ const Checkout = () => {
                     </Typography>
                   </Grid>
 
-                  <Paper
-                    elevation={1}
+                  <Grid
+                    item
+                    xs={12}
                     style={{
-                      padding: 8,
-                      textAlign: "center",
-                      margin: "auto",
-                      marginTop: 16,
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
                     }}
                   >
-                    <Grid
-                      item
-                      xs={12}
-                      style={{
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Typography variant="subtitle2">
-                        {selectedOptionDescription}
-                      </Typography>
-                    </Grid>
-                  </Paper>
+                    <Typography variant="subtitle2">
+                      {selectedOptionDescription}
+                    </Typography>
+                  </Grid>
                 </>
               )}
             </Grid>
-          </Paper>
 
-          <Paper elevation={3} style={{ padding: 16, marginBottom: 16 }}>
             <Grid container spacing={2}>
               <Grid item xs={12}>
                 <Paper elevation={0} style={{ padding: 8 }}>
@@ -554,21 +573,23 @@ const Checkout = () => {
               </Grid>
             </Grid>
           </Paper>
-          <Button
-            onClick={formik.handleSubmit}
-            variant="contained"
-            color="primary"
-            fullWidth
-            disabled={!formik.isValid || !formik.touched}
-          >
-            Seleccione método de pago
-          </Button>
-
+          <div style={{ textAlign: "center", marginTop: 16 }}>
+            <Button
+              onClick={formik.handleSubmit}
+              variant="contained"
+              color="primary"
+              disabled={!formik.isValid || !formik.touched}
+              style={{ maxWidth: 600, width: "100%" }}
+            >
+              Seleccione método de pago
+            </Button>
+          </div>
         </>
       ) : (
         <>
           {paramValue === "approved" ? (
             (console.log("orderId: " + orderId),
+            sendEmail(),
             (confetti({
               zindex: 999,
               particleCount: 100, //cantidad de papelitos
@@ -576,7 +597,7 @@ const Checkout = () => {
               origin: { y: 0.6 }, //desde donde salen
             }),
             (
-              <Paper elevation={3} style={{ padding: 16, marginBottom: 16 }}>
+              <Paper elevation={3} style={{ padding: 16, marginBottom: 16, maxWidth: 600 }}>
                 <Grid
                   container
                   spacing={2}
@@ -608,7 +629,8 @@ const Checkout = () => {
                   </Grid>
                 </Grid>
               </Paper>
-            )))
+            )))    
+
           ) : (
             <Typography
               variant="h5"
@@ -622,7 +644,9 @@ const Checkout = () => {
       )}
 
       {preferenceId && (
-        <Wallet initialization={{ preferenceId, redirectMode: "self" }} />
+        <div style={{ maxWidth: 600, margin: "0 auto", marginTop: "16px" }}>
+          <Wallet initialization={{ preferenceId, redirectMode: "self" }} />
+        </div>
       )}
     </div>
   );

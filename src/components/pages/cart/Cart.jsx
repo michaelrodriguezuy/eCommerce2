@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { CartContext } from "../../../context/CartContext";
-import { Link } from "react-router-dom";
-
+import { AuthContext } from "../../../context/AuthContext";
+import { Link, useNavigate } from 'react-router-dom';
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 
@@ -45,8 +45,12 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 const Cart = () => {
+
+
   const { cart, clearCart, deleteById, getTotalPrice, getFormatCurrency } =
     useContext(CartContext);
+  const { isLogged } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   let total = getTotalPrice();
 
@@ -67,6 +71,40 @@ const Cart = () => {
     });
   };
 
+  const handleCheckout = () => {
+    if (isLogged) {
+      // Si el usuario está logueado, lo redirige al checkout
+      return (
+        <Link to="/checkout">
+          <IconButton>
+            <Tooltip title="PAGAR">
+              <PaidIcon color="primary" style={{ fontSize: 60 }} />
+            </Tooltip>
+          </IconButton>
+        </Link>
+      );
+    } else {
+      // Si el usuario no está logueado, muestra un mensaje de advertencia
+      Swal.fire({
+        title: "Inicia sesión",
+        text: "Para proceder con la compra, primero debes iniciar sesión.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Iniciar sesión",
+        cancelButtonText: "Cancelar"
+      }).then((result) => {
+        if (result.isConfirmed) {      
+          // Si el usuario decide iniciar sesión, lo redirige a la página de inicio de sesión
+          return (
+            navigate("/login")
+          );
+        }
+      });
+    }
+  };
+
   return (
     <>
       <Paper
@@ -77,8 +115,10 @@ const Cart = () => {
           padding: "20px",
           textAlign: "center",
           mb: 3,
+          maxWidth: 600,
+          margin: "0 auto",
         }}
-      >
+        >
         <Typography variant="h4" component="h4">
           Mi compra
         </Typography>
@@ -91,10 +131,10 @@ const Cart = () => {
           </Tooltip>
         )}
       </Paper>
-
+      
       <TableContainer
         component={Paper}
-        style={{ marginTop: "30px", marginBottom: "50px" }}
+        style={{ maxWidth:800, margin:'0 auto', marginTop: "30px", marginBottom: "50px", textAlign: "center" }}
       >
         <Card sx={{ minWidth: 275, overflowX: "auto" }}>
           <CardContent>
@@ -158,30 +198,29 @@ const Cart = () => {
         sx={{
           display: "flex",
           justifyContent: "space-around",
-          flexDirection:"row",
+          flexDirection: "row",
           alignItems: "center",
           padding: "20px",
           textAlign: "center",
           mb: 3,
+          maxWidth: 600,
+          margin: "0 auto",          
         }}
       >
-        <Typography variant="h3" component="h3" sx={{
-      alignSelf: "center", 
-      lineHeight: "1", 
-      display: "flex", 
-    }}>
+        <Typography
+          variant="h3"
+          component="h3"
+          sx={{
+            alignSelf: "center",
+            lineHeight: "1",
+            display: "flex",
+          }}
+        >
           Total: {getFormatCurrency(total)}
         </Typography>
 
-        {cart.length > 0 && (
-          <Link to="/checkout" style={{ color: "steelblue" }}>
-            <IconButton>
-              <Tooltip title="PAGAR">
-                <PaidIcon color="primary" style={{ fontSize: 60 }} />
-              </Tooltip>
-            </IconButton>
-          </Link>
-        )}
+        {cart.length > 0 && handleCheckout()}
+
       </Paper>
     </>
   );

@@ -26,12 +26,13 @@ import Swal from "sweetalert2";
 
 const Login = () => {
   const { handleLogin } = useContext(AuthContext);
+  const rolAdmin = import.meta.env.VITE_ROLADMIN;
 
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const handleClickShowPassword = () => setShowPassword(!showPassword);
 
-  const idArticuloRedirigido = localStorage.getItem("originalArticleId");
+  // const idArticuloRedirigido = localStorage.getItem("originalArticleId");
 
   let initialValues = {
     email: "",
@@ -69,10 +70,15 @@ const Login = () => {
 
         handleLogin(finalyUser);
 
-        if (idArticuloRedirigido) {
-          navigate(`/itemDetail/${idArticuloRedirigido}`);
+        //esto lo usaba antes cuando era obligatorio loguearse para usar el e-commerce
+        // if (idArticuloRedirigido) {
+        //   navigate(`/itemDetail/${idArticuloRedirigido}`);
+        // } else {
+        // }
+        if (finalyUser.rol === rolAdmin) {
+          navigate("/dashboard");
         } else {
-          navigate("/");
+          navigate("/cart");
         }
 
       } else {
@@ -107,12 +113,11 @@ const Login = () => {
         console.log(error);
       }
 
-      if (idArticuloRedirigido) {
-        navigate(`/itemDetail/${idArticuloRedirigido}`);
-      } else {
-        navigate("/");
-      }
-
+      // if (idArticuloRedirigido) {
+      //   navigate(`/itemDetail/${idArticuloRedirigido}`);
+      // } else {
+      // }
+      navigate("/cart");
     } catch (error) {
       console.log(error);
     }

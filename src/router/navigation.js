@@ -25,16 +25,18 @@ export const menuItems = [
     //     title: "Carrito",
     //     Icon: ShoppingCartCheckoutIcon
     // },
-    {
-        id: "dataUser",
-        path: "/data-user",
-        title: "Mis datos",
-        Icon: ContactPageIcon
-    },
-    {
-        id: "userOrders",
-        path: "/user-orders",
-        title: "Mis compras",
-        Icon: ShopIcon
-    }
+
+
+    // {
+    //     id: "dataUser",
+    //     path: "/data-user",
+    //     title: "Mis datos",
+    //     Icon: ContactPageIcon
+    // },
+    // {
+    //     id: "userOrders",
+    //     path: "/user-orders",
+    //     title: "Mis compras",
+    //     Icon: ShopIcon
+    // }
 ]

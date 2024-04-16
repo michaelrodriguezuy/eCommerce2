@@ -12,7 +12,9 @@ const ProductsForm = ({
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
-  const [file, setFile] = useState(null);
+  
+  const [files, setFiles] = useState([]);
+  const [imageUrls, setImageUrls] = useState([]);
 
   const [newProduct, setNewProduct] = useState({
     code: "",
@@ -21,29 +23,41 @@ const ProductsForm = ({
     unit_price: 0,
     stock: 0,
     category: "",
-    image: "",
+    image: [],
   });
 
+  const handleFileChange = (e) => {
+    const selectedFiles = e.target.files;
+    const filesArray = Array.from(selectedFiles);
+    setFiles(filesArray);
+  };
+
   const handleImage = async () => {
+    console.log("cargando imagenes");
     setIsLoading(true);
-
+  
     try {
-      let url = await uploadFile(file, (progress) => {
-        setUploadProgress(progress);
-      });
+      const urls = await Promise.all(
 
-      if (productSelected) {
-        setProductSelected({ ...productSelected, image: url });
-      } else {
-        setNewProduct({ ...newProduct, image: url });
-      }
+        Array.from(files).map(async (file) => {
+          console.log("cargando imagen dentro del array");
+          const url = await uploadFile(file, (progress) => {
+            setUploadProgress(progress);
+          });
+          console.log("url cargada", url);
+          return url;
+        })
+      );
 
+      setImageUrls(prevUrls => [...prevUrls, ...urls]);
+      
       setIsLoading(false);
     } catch (error) {
       console.error("Error al cargar la imagen:", error);
       setIsLoading(false);
     }
   };
+  
 
   const handleChange = (e) => {
     if (productSelected) {
@@ -66,6 +80,7 @@ const ProductsForm = ({
         ...productSelected,
         unit_price: +productSelected.unit_price,
         stock: +productSelected.stock,
+        image: imageUrls,
       };
       updateDoc(doc(productsCollection, productSelected.id), obj).then(() => {
         setIsChange(true);
@@ -76,6 +91,7 @@ const ProductsForm = ({
         ...newProduct,
         unit_price: +newProduct.unit_price,
         stock: +newProduct.stock,
+        image: imageUrls,
       };
       addDoc(productsCollection, obj).then(() => {
         setIsChange(true);
@@ -144,12 +160,12 @@ const ProductsForm = ({
             </MenuItem>
           ))}
         </TextField>
-        <TextField type="file" onChange={(e) => setFile(e.target.files[0])} />
-        {file && (
+        <TextField type="file" onChange={handleFileChange} multiple />
+        {files.length > 0 && (
           <div>
             <div style={{ display: "flex", justifyContent: "center" }}>
               <Button onClick={handleImage} type="button" disabled={isLoading}>
-                Cargar imagen
+                Cargar imágenes
               </Button>
             </div>
             <div>
@@ -164,7 +180,7 @@ const ProductsForm = ({
           </div>
         )}
 
-        {file && !isLoading && uploadProgress === 100 && (
+        {files && !isLoading && uploadProgress === 100 && (
           <Button
             variant="contained"
             type="submit"

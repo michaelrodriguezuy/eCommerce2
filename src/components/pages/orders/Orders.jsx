@@ -13,6 +13,7 @@ import {
   Typography,
   styled,
   tableCellClasses,
+  TextField,
 } from "@mui/material";
 import {
   collection,
@@ -69,6 +70,8 @@ const Orders = () => {
 
   const { getDateLong, getFormatCurrency } = useContext(CartContext);
 
+  const [searchInput, setSearchInput] = useState("");
+
   useEffect(() => {
     const ordersCollection = collection(db, "orders");
 
@@ -101,7 +104,13 @@ const Orders = () => {
             });
           });
 
-          setOrders(ordersData);
+          // Filtrar los resultados según el campo de búsqueda
+      const filteredOrders = ordersData.filter(order =>
+        order.codigoCompra.toLowerCase().includes(searchInput.toLowerCase())
+      );
+
+
+          setOrders(filteredOrders);
         } else {
           console.log("querySnapshot es undefined o null");
         }
@@ -111,7 +120,7 @@ const Orders = () => {
     };
 
     fetchData();
-  }, []);
+  }, [searchInput]);
 
   const handleRequestSort = (property) => {
     const isAsc = orderBy === property && orderDirection === "asc";
@@ -197,6 +206,10 @@ const Orders = () => {
     return subtotal;
   }
 
+  const handleSearchInputChange = (event) => {
+    setSearchInput(event.target.value);
+  };
+
   return (
     <>
       <Tooltip title="Volver atras">
@@ -219,6 +232,17 @@ const Orders = () => {
       >
         Ordenes de compra
       </Typography>
+
+      <Grid item xs={12} sm={6} sx={{ padding: "20px", textAlign: "center", maxWidth: 600, margin: "0 auto" }}>
+            <TextField
+              id="search"
+              label="Buscar orden de compra por código"
+              variant="outlined"
+              value={searchInput}
+              onChange={handleSearchInputChange}
+              fullWidth
+            />
+          </Grid>
 
       <TableContainer component={Paper} style={{ marginTop: "5px" }}>
         <Table sx={{ minWidth: 650 }} aria-label="customized table">
@@ -335,6 +359,9 @@ const Orders = () => {
               </Typography>
               <Typography sx={{ marginBottom: 2 }}>
                 <strong>Cliente:</strong> {theOrder.cliente}
+              </Typography>
+              <Typography sx={{ marginBottom: 2 }}>
+                <strong>Documento:</strong> {theOrder.document || "No disponible"}
               </Typography>
               <Typography sx={{ marginBottom: 2 }}>
                 <strong>Teléfono:</strong> {theOrder.phone || "No disponible"}

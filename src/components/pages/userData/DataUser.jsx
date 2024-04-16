@@ -56,7 +56,7 @@ const DataUser = () => {
     <>
       
 
-      <TableContainer component={Paper} style={{ marginTop: "5px" }}>
+      <TableContainer component={Paper} style={{ marginTop: "5px", maxWidth:800, margin:'0 auto' }}>
         <Table sx={{ minWidth: 650 }} aria-label="customized table">
           <TableHead>
             <TableRow>
