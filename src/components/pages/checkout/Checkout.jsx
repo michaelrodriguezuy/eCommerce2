@@ -235,8 +235,8 @@ const Checkout = () => {
     console.log("Enviando solicitud al server...");
     try {
       let response = await axios.post(
-        "http://localhost:8081/create_preference",
-        //"https://back-seven-plum.vercel.app/create_preference",
+        //"http://localhost:8081/create_preference",
+        "https://back-seven-plum.vercel.app/create_preference",
         {
           items: items,
           shipment_cost: parseFloat(shipmentCost),
@@ -256,7 +256,7 @@ const Checkout = () => {
 
   const sendEmail = async () => {
     try {
-      const response = await axios.post('http://localhost:8081/send-email', {
+      const response = await axios.post('https://back-seven-plum.vercel.app/send-email', {
         to: 'm33agra@hotmail.com',
         subject: 'Compra realizada en su e-Commerce',
         text: 'Se ha recibido una nueva compra con el ID: '+ orderId,
