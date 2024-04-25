@@ -55,6 +55,7 @@ const ProductsList = ({ products, categories, setIsChange }) => {
 
   const { getFormatCurrency } = useContext(CartContext);
 
+
   const deleteProduct = (id) => {
     deleteDoc(doc(db, "products", id));
     setIsChange(true);
@@ -94,6 +95,8 @@ const ProductsList = ({ products, categories, setIsChange }) => {
       }
     };
   }
+
+ 
 
   const sortedProducts = stableSort(
     products,

@@ -69,6 +69,23 @@ const UserOrders = () => {
       return subtotal;
   }
 
+  const getColorByHex = (colorHex) => {
+    
+    const colorMap = {
+      "#FF0000" : "rojo",
+      "#0000FF" : "azul",
+       "#00FF00" : "verde",
+      "#FFFF00" : "amarillo",
+      "#FFA500" : "naranja",
+      "#EE82EE"   : "violeta",
+      "#FFC0CB" : "rosa",
+      "#8B4513" : "marrón",
+      "#808080" : "gris",
+    };    
+    
+    return colorMap[colorHex] || colorHex
+  }
+
   return (
     <div>
       <Typography
@@ -106,6 +123,7 @@ const UserOrders = () => {
                   <TableRow >
                     <StyledTableCell align="left">Fecha</StyledTableCell>
                     <StyledTableCell align="center">Artículo</StyledTableCell>
+                    <StyledTableCell align="center">Color</StyledTableCell>
                     <StyledTableCell align="center">Precio</StyledTableCell>
                     <StyledTableCell align="center">Cantidad</StyledTableCell>
                     <StyledTableCell align="center">SubTotal</StyledTableCell>
@@ -120,6 +138,7 @@ const UserOrders = () => {
                         {getDateShort(order.date)}
                       </span>
                     </StyledTableCell>
+                    <StyledTableCell align="left"></StyledTableCell>
                     <StyledTableCell align="left"></StyledTableCell>
                     <StyledTableCell align="left"></StyledTableCell>
                     <StyledTableCell align="left"></StyledTableCell>
@@ -138,6 +157,9 @@ const UserOrders = () => {
                         {product.title}
                       </StyledTableCell>
                       <StyledTableCell align="center">
+                        {getColorByHex(product.color)}
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
                         {getFormatCurrency(product.unit_price)}
                       </StyledTableCell>
                       <StyledTableCell align="center">
@@ -154,6 +176,7 @@ const UserOrders = () => {
                   style={{ backgroundColor: "lightsteelblue" }}
                 >
                   <StyledTableRow key={order.id}>
+                    <StyledTableCell align="left">{}</StyledTableCell>
                     <StyledTableCell align="left">{}</StyledTableCell>
                     <StyledTableCell align="left">{}</StyledTableCell>
                     <StyledTableCell align="left">{}</StyledTableCell>

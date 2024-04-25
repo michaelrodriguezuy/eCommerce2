@@ -68,6 +68,7 @@ const ProductsForm = ({
       });
     } else {
       setNewProduct({ ...newProduct, [e.target.name]: e.target.value });
+      console.log("newProduct", newProduct);
     }
   };
 
@@ -77,11 +78,12 @@ const ProductsForm = ({
     const productsCollection = collection(db, "products");
 
     if (productSelected) {
+      console.log("productSelected", productSelected);
       let obj = {
         ...productSelected,
         unit_price: +productSelected.unit_price,
         stock: +productSelected.stock,
-        color: +productSelected.color,
+        color: productSelected.color,
         image: imageUrls,
       };
       updateDoc(doc(productsCollection, productSelected.id), obj).then(() => {
@@ -93,9 +95,10 @@ const ProductsForm = ({
         ...newProduct,
         unit_price: +newProduct.unit_price,
         stock: +newProduct.stock,
-        color:+newProduct.color,
+        color:newProduct.color,
         image: imageUrls,
       };
+      console.log("obj", obj);
       addDoc(productsCollection, obj).then(() => {
         setIsChange(true);
         handleClose();

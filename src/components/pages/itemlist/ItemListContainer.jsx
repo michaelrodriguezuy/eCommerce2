@@ -25,8 +25,13 @@ const ItemListContainer = () => {
   const [products, setProducts] = useState([]);
   const { getFormatCurrency } = useContext(CartContext);
   const itemsPerPage = 9;
-  const pageCount = Math.ceil(products.length / itemsPerPage);
-  const [currentPage, setCurrentPage] = useState(0);
+
+  //esto lo hice para que no se muestren los productos que no tienen stock y tampoco se repitan los productos
+  const filteredProducts = products.filter(product => product.stock > 0);
+  const uniqueProducts = [];
+  const codes = new Set();
+
+  
 
   const [searchInput, setSearchInput] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("todos");
@@ -64,7 +69,17 @@ const ItemListContainer = () => {
     setCurrentPage(0);
   };
 
-  const displayedProducts = products
+  filteredProducts.forEach(product => {
+    if (!codes.has(product.code)) {
+      uniqueProducts.push(product);
+      codes.add(product.code);
+    }
+  });
+
+  const pageCount = Math.ceil(uniqueProducts.length / itemsPerPage);
+  const [currentPage, setCurrentPage] = useState(0);
+
+  const displayedProducts = uniqueProducts
     .filter((product) => {
       const matchesSearch = product.title
         .toLowerCase()

@@ -105,6 +105,23 @@ const Cart = () => {
     }
   };
 
+  const getColorByHex = (colorHex) => {
+    
+    const colorMap = {
+      "#FF0000" : "rojo",
+      "#0000FF" : "azul",
+       "#00FF00" : "verde",
+      "#FFFF00" : "amarillo",
+      "#FFA500" : "naranja",
+      "#EE82EE"   : "violeta",
+      "#FFC0CB" : "rosa",
+      "#8B4513" : "marrón",
+      "#808080" : "gris",
+    };    
+    
+    return colorMap[colorHex] || colorHex
+  }
+
   return (
     <>
       <Paper
@@ -142,6 +159,7 @@ const Cart = () => {
               <TableHead>
                 <TableRow>
                   <StyledTableCell align="center">Artículo</StyledTableCell>
+                  <StyledTableCell align="center">Color</StyledTableCell>
                   <StyledTableCell align="center">
                     Precio unitario
                   </StyledTableCell>
@@ -161,6 +179,11 @@ const Cart = () => {
                         align="center"
                       >
                         {product.title}
+                      </StyledTableCell>
+
+                      <StyledTableCell align="center">                        
+                        {/* aca necesito una funcion para mostrar el color en string */}
+                        {getColorByHex(product.color)}
                       </StyledTableCell>
 
                       <StyledTableCell align="center">

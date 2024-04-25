@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { db } from "../../../fireBaseConfig";
-import { collection, getDoc, doc } from "firebase/firestore";
+import { collection, getDoc, doc, getDocs, where, query } from "firebase/firestore";
 import {
   Button,
   Card,
@@ -21,6 +21,7 @@ import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import Swal from "sweetalert2";
+import ColorCircle from "./ColorCircle";
 
 const ItemDetail = () => {
   const { id } = useParams();
@@ -29,26 +30,58 @@ const ItemDetail = () => {
   const [product, setProduct] = useState(null);
   const [contador, setContador] = useState(quantity || 1);
   const { getFormatCurrency } = useContext(CartContext);
+  
+  const [selectedColor, setSelectedColor] = useState(null);
+  const [relatedProducts, setRelatedProducts] = useState([]);
+  const [colorSelected, setColorSelected] = useState(false); //si hay colores, el usuario debe elegir uno
 
   useEffect(() => {
     const getProduct = async () => {
-      let refCollection = collection(db, "products");
-      let refDoc = doc(refCollection, id);
-
-      const productSnapshot = await getDoc(refDoc);
-
-      setProduct({
-        id: productSnapshot.id,
-        ...productSnapshot.data(),
-      });
+      try {
+        const productRef = doc(db, "products", id);
+        const productSnapshot = await getDoc(productRef);
+    
+        if (productSnapshot.exists()) {
+          const productData = productSnapshot.data();
+          setProduct({
+            id: productSnapshot.id,
+            ...productData,
+          });
+    
+          const relatedProductsSnapshot = await getDocs(
+            query(
+              collection(db, "products"),
+              where("code", "==", productData.code)
+            )
+          );
+    
+          const relatedProductsData = relatedProductsSnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+    
+          setRelatedProducts(relatedProductsData);
+        } else {
+          console.log("No such document!");
+        }
+      } catch (error) {
+        console.error("Error fetching related products:", error);
+      }
     };
+    
+    
     getProduct();
-
-    // //si en localStorage existe originalArticleId, lo elimino
-    // if (localStorage.getItem("originalArticleId")) {
-    //   localStorage.removeItem("originalArticleId");
-    // }
   }, [id]);
+  
+  // //si en localStorage existe originalArticleId, lo elimino
+  // if (localStorage.getItem("originalArticleId")) {
+  //   localStorage.removeItem("originalArticleId");
+  // }
+
+  const handleColorSelection = (color) => {
+    setSelectedColor(color);
+    setColorSelected(true); 
+  };
 
   const sumar = () => {
     if (contador < product.stock) {
@@ -77,29 +110,50 @@ const ItemDetail = () => {
   };
 
   const agregarAlCarrito = () => {
-    let producto = {
-      ...product,
-      quantity: contador,
-    };
-    addItem(producto);
+    if (product) {
+      let producto = {
+        ...product,
+        color: selectedColor,
+        quantity: contador,
+      };
+      addItem(producto);
 
-    let message = "";
+      let message = "";
 
-    if (quantity) {
-      message = `Ya tienes ${quantity} en el carrito`;
+      if (quantity) {
+        message = `Ya tienes ${quantity} en el carrito`;
+      }
+
+      if (product?.stock === quantity) {
+        message = "Ya tienes el máximo en el carrito";
+      }
+
+      Swal.fire({
+        icon: "success",
+        title: "Producto agregado al carrito",
+        text: message,
+        confirmButtonText: "Ok",
+      });
     }
-
-    if (product?.stock === quantity) {
-      message = "Ya tienes el máximo en el carrito";
-    }
-
-    Swal.fire({
-      icon: "success", // Puedes usar 'info', 'warning', 'error', etc.
-      title: "Producto agregado al carrito",
-      text: message,
-      confirmButtonText: "Ok",
-    });
   };
+
+  const getColorByName = (colorName) => {
+    
+    const colorMap = {
+      rojo: "#FF0000",
+      azul: "#0000FF",
+      verde: "#00FF00",
+      amarillo: "#FFFF00",
+      naranja: "#FFA500",
+      violeta: "#EE82EE",
+      rosa: "#FFC0CB",
+      marron: "#8B4513",
+      gris  : "#808080",
+    };    
+    colorName = colorName.toLowerCase()
+    return colorMap[colorName] || colorName
+  }
+  
 
   return (
     <>
@@ -206,6 +260,28 @@ const ItemDetail = () => {
                   >
                     {getFormatCurrency(product.unit_price)}
                   </Button>
+
+                  {/* aqui pondria el codigo para que el usuario vea las variables de colores que tiene este articulo */}
+                  {relatedProducts.length > 1 && (
+                    
+                  <div >
+        {relatedProducts.map((relatedProduct) => (
+          <ColorCircle
+            key={relatedProduct.id}
+            colorCode={getColorByName(relatedProduct.color)}
+            setSelectedColor={(color) => {
+              setSelectedColor(color);
+              setColorSelected(true); 
+            }}
+            productID={relatedProduct.id}
+            setProduct={setProduct}
+            relatedProducts={relatedProducts}
+            selectedColor={selectedColor}            
+          />
+        ))}
+      </div>
+                  )}
+
                   <Tooltip
                     title={
                       product.stock > 0 ? "Stock disponible" : "No hay stock"
@@ -260,12 +336,17 @@ const ItemDetail = () => {
                     <AddIcon />
                   </IconButton>
                   <Tooltip title="Agregar al carrito">
-                    <IconButton
-                      aria-label="add to cart"
-                      onClick={agregarAlCarrito}
-                    >
-                      <AddShoppingCartIcon />
-                    </IconButton>
+                  <span>
+                      <IconButton
+                        aria-label="add to cart"
+                        onClick={agregarAlCarrito}
+                        disabled={!product || (relatedProducts.length > 1 && !colorSelected)}
+
+                      >
+                        <AddShoppingCartIcon />
+                      </IconButton>
+                      
+                    </span>
                   </Tooltip>
                 </Paper>
               )}

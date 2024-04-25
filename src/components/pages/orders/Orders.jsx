@@ -210,6 +210,23 @@ const Orders = () => {
     setSearchInput(event.target.value);
   };
 
+  const getColorByHex = (colorHex) => {
+    
+    const colorMap = {
+      "#FF0000" : "rojo",
+      "#0000FF" : "azul",
+       "#00FF00" : "verde",
+      "#FFFF00" : "amarillo",
+      "#FFA500" : "naranja",
+      "#EE82EE"   : "violeta",
+      "#FFC0CB" : "rosa",
+      "#8B4513" : "marrón",
+      "#808080" : "gris",
+    };    
+    
+    return colorMap[colorHex] || colorHex
+  }
+
   return (
     <>
       <Tooltip title="Volver atras">
@@ -414,6 +431,17 @@ const Orders = () => {
                           textAlign: "center",
                         }}
                       >
+                        Color
+                      </TableCell>
+                      <TableCell
+                        style={{
+                          fontSize: "12px",
+                          flex: "1",
+                          fontWeight: "bold",
+                          whiteSpace: "nowrap",
+                          textAlign: "center",
+                        }}
+                      >
                         Costo unitario
                       </TableCell>
 
@@ -452,6 +480,16 @@ const Orders = () => {
                           }}
                         >
                           {item.title}
+                        </TableCell>
+                        <TableCell
+                          style={{
+                            fontSize: "12px",
+                            flex: "1",
+                            whiteSpace: "nowrap",
+                            textAlign: "center",
+                          }}
+                        >
+                          {getColorByHex(item.color)}
                         </TableCell>
                         <TableCell
                           style={{

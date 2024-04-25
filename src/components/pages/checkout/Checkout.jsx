@@ -259,7 +259,7 @@ const Checkout = () => {
       // const response = await axios.post('https://back-seven-plum.vercel.app/send-email', {
         const response = await axios.post('http://localhost:8081/send-email-checkout-user', {
         to: user.email,
-        subject: 'Puedes ver los datos de tu compra en el siguiente link: ' + 'http://localhost:8081/user-orders', 
+        subject: 'Puedes ver los datos de tu compra entrando a tu perfil en la opcion "Mis compras"', 
         text: 'Datos de tu compra en e-Commerce'
       });
   
@@ -282,6 +282,23 @@ const Checkout = () => {
       console.error('Error al enviar el correo electrónico:', error);
     }
   };
+
+  const getColorByHex = (colorHex) => {
+    
+    const colorMap = {
+      "#FF0000" : "rojo",
+      "#0000FF" : "azul",
+       "#00FF00" : "verde",
+      "#FFFF00" : "amarillo",
+      "#FFA500" : "naranja",
+      "#EE82EE"   : "violeta",
+      "#FFC0CB" : "rosa",
+      "#8B4513" : "marrón",
+      "#808080" : "gris",
+    };    
+    
+    return colorMap[colorHex] || colorHex
+  }
 
   return (
     <div style={{ marginBottom: "100px" }}>
@@ -436,6 +453,17 @@ const Checkout = () => {
                             textAlign: "center",
                           }}
                         >
+                          Color
+                        </TableCell>
+                        <TableCell
+                          style={{
+                            fontSize: "12px",
+                            flex: "1",
+                            fontWeight: "bold",
+                            whiteSpace: "nowrap",
+                            textAlign: "center",
+                          }}
+                        >
                           Costo unitario
                         </TableCell>
 
@@ -464,6 +492,16 @@ const Checkout = () => {
                             }}
                           >
                             {item.title}
+                          </TableCell>
+                          <TableCell
+                            style={{
+                              fontSize: "12px",
+                              flex: "1",
+                              whiteSpace: "nowrap",
+                              textAlign: "center",
+                            }}
+                          >
+                            {getColorByHex(item.color)}
                           </TableCell>
                           <TableCell
                             style={{
