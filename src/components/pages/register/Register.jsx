@@ -22,7 +22,8 @@ import "./Register.css";
 
 import { useFormik } from "formik";
 import * as Yup from "yup";
-// import Swal from "sweetalert2";
+import Swal from "sweetalert2";
+import axios from "axios";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -74,13 +75,44 @@ const Register = () => {
           lastname: value.lastname,
           // phone: usuario.phone, ESTE DATO Y EL CODIGO DE AREA LO GUARDO EN EL PASO PREVIO AL CHECKOUT          
         });
+        // dar aviso de registro exitoso con sweetalert2 y enviar un correo de confirmación
+        Swal.fire({
+          icon: "success",
+          title: "Registro exitoso",
+          text: "Te enviamos un correo de confirmación a tu casilla de email",
+        });
+  
+        await sendEmail(value.email);
+        navigate("/login");
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "El usuario no pudo ser registrado",
+        });
       }
-      navigate("/login");
+
     } catch (error) {
       console.log(error);
     }
   };
   
+  const sendEmail = async (email) => {
+    console.log('Enviando correo electrónico a:', email);
+    try {
+      // const response = await axios.post('https://back-seven-plum.vercel.app/send-email-register', {
+        const response = await axios.post('http://localhost:8081/send-email-register', {
+        to: email,
+        subject: 'Confirmación de registro en eCommerce2',
+        text: 'Gracias por registrarte en nuestro sitio.',
+      });
+  
+      console.log(response.data.message); // Mensaje de confirmación del servidor
+    } catch (error) {
+      console.error('Error al enviar el correo electrónico:', error);
+    }
+  };
+
   const formik = useFormik({
     initialValues,
     validationSchema,

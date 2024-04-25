@@ -22,6 +22,7 @@ const ProductsForm = ({
     description: "",
     unit_price: 0,
     stock: 0,
+    color: "",
     category: "",
     image: [],
   });
@@ -80,6 +81,7 @@ const ProductsForm = ({
         ...productSelected,
         unit_price: +productSelected.unit_price,
         stock: +productSelected.stock,
+        color: +productSelected.color,
         image: imageUrls,
       };
       updateDoc(doc(productsCollection, productSelected.id), obj).then(() => {
@@ -91,6 +93,7 @@ const ProductsForm = ({
         ...newProduct,
         unit_price: +newProduct.unit_price,
         stock: +newProduct.stock,
+        color:+newProduct.color,
         image: imageUrls,
       };
       addDoc(productsCollection, obj).then(() => {
@@ -144,6 +147,13 @@ const ProductsForm = ({
           defaultValue={productSelected?.stock}
           label="stock"
           name="stock"
+          onChange={handleChange}
+        />
+        <TextField
+          variant="outlined"
+          defaultValue={productSelected?.color}
+          label="color"
+          name="color"
           onChange={handleChange}
         />
         <TextField

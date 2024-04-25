@@ -235,8 +235,8 @@ const Checkout = () => {
     console.log("Enviando solicitud al server...");
     try {
       let response = await axios.post(
-        //"http://localhost:8081/create_preference",
-        "https://back-seven-plum.vercel.app/create_preference",
+        "http://localhost:8081/create_preference",
+        // "https://back-seven-plum.vercel.app/create_preference",
         {
           items: items,
           shipment_cost: parseFloat(shipmentCost),
@@ -254,12 +254,27 @@ const Checkout = () => {
     }
   };
 
+  const sendEmailUser = async () => {
+    try {
+      // const response = await axios.post('https://back-seven-plum.vercel.app/send-email', {
+        const response = await axios.post('http://localhost:8081/send-email-checkout-user', {
+        to: user.email,
+        subject: 'Puedes ver los datos de tu compra en el siguiente link: ' + 'http://localhost:8081/user-orders', 
+        text: 'Datos de tu compra en e-Commerce'
+      });
+  
+      console.log(response.data.message); // Mensaje de confirmación del servidor
+    } catch (error) {
+      console.error('Error al enviar el correo electrónico:', error);
+    }
+  };
   const sendEmail = async () => {
     try {
-      const response = await axios.post('https://back-seven-plum.vercel.app/send-email', {
-        to: 'm33agra@hotmail.com',
-        subject: 'Compra realizada en su e-Commerce',
-        text: 'Se ha recibido una nueva compra con el ID: '+ orderId,
+      // const response = await axios.post('https://back-seven-plum.vercel.app/send-email', {
+        const response = await axios.post('http://localhost:8081/send-email-checkout', {
+        to: 'olimarteam@gmail.com', //correo del comercio
+        subject: 'Se ha recibido una nueva venta con el ID: '+ orderId, 
+        text: 'Datos de una venta en su e-Commerce'
       });
   
       console.log(response.data.message); // Mensaje de confirmación del servidor
@@ -589,7 +604,8 @@ const Checkout = () => {
         <>
           {paramValue === "approved" ? (
             (console.log("orderId: " + orderId),
-            sendEmail(),
+            sendEmail(), //aviso al comercio de la venta
+            sendEmailUser(), //aviso al usuario de su compra
             (confetti({
               zindex: 999,
               particleCount: 100, //cantidad de papelitos

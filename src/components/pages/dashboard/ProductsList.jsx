@@ -134,6 +134,10 @@ const ProductsList = ({ products, categories, setIsChange }) => {
                   <span onClick={() => handleRequestSort("stock")}>Stock</span>
                 </Tooltip>
               </StyledTableCell>
+   
+              <StyledTableCell align="center">               
+                <span>Color </span>
+              </StyledTableCell>
 
               <StyledTableCell align="center">Imágen</StyledTableCell>
 
@@ -164,6 +168,8 @@ const ProductsList = ({ products, categories, setIsChange }) => {
                 <StyledTableCell align="center">
                   {product.stock}
                 </StyledTableCell>
+
+                <StyledTableCell align="center">{product.color}</StyledTableCell>
 
                 <StyledTableCell align="center">
                   <img src={product.image} alt="" style={{ height: "80px" }} />
