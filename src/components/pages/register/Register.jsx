@@ -9,7 +9,7 @@ import {
   InputAdornment,
   InputLabel,
   OutlinedInput,
-  TextField,  
+  TextField,
   Typography,
 } from "@mui/material";
 
@@ -31,15 +31,15 @@ const Register = () => {
 
   const [mostrarTextoCompleto, setMostrarTextoCompleto] = useState(false);
   const [aceptarPoliticas, setAceptarPoliticas] = useState(false);
-  
+
   const handleClickShowPassword = () => setShowPassword(!showPassword);
 
-    let initialValues = {
+  let initialValues = {
     name: "",
     lastname: "",
     email: "",
-    password: "", 
-    confirmPassword : "",
+    password: "",
+    confirmPassword: "",
   };
 
   const validationSchema = Yup.object({
@@ -51,14 +51,12 @@ const Register = () => {
     password: Yup.string()
       .required("La contraseña es obligatoria")
       .min(6, "La contraseña debe tener al menos 6 caracteres"),
-    confirmPassword: Yup.string().required("La confirmación de contraseña es obligatoria")
-     .equals( 
-      [Yup.ref('password')], 
-      "Las contraseñas deben coincidir" 
-    )
-  });  
-  
-  const handleSubmit = async (value) => {    
+    confirmPassword: Yup.string()
+      .required("La confirmación de contraseña es obligatoria")
+      .equals([Yup.ref("password")], "Las contraseñas deben coincidir"),
+  });
+
+  const handleSubmit = async (value) => {
     try {
       const res = await register({
         email: value.email,
@@ -66,14 +64,13 @@ const Register = () => {
       });
 
       if (res && res.user) {
-        
         await setDoc(doc(db, "users", res.user.uid), {
           rol: "user",
           email: res.user.email,
 
           name: value.name,
           lastname: value.lastname,
-          // phone: usuario.phone, ESTE DATO Y EL CODIGO DE AREA LO GUARDO EN EL PASO PREVIO AL CHECKOUT          
+          // phone: usuario.phone, ESTE DATO Y EL CODIGO DE AREA LO GUARDO EN EL PASO PREVIO AL CHECKOUT
         });
         // dar aviso de registro exitoso con sweetalert2 y enviar un correo de confirmación
         Swal.fire({
@@ -81,7 +78,7 @@ const Register = () => {
           title: "Registro exitoso",
           text: "Te enviamos un correo de confirmación a tu casilla de email",
         });
-  
+
         await sendEmail(value.email);
         navigate("/login");
       } else {
@@ -91,32 +88,34 @@ const Register = () => {
           text: "El usuario no pudo ser registrado",
         });
       }
-
     } catch (error) {
       console.log(error);
     }
   };
-  
+
   const sendEmail = async (email) => {
-    console.log('Enviando correo electrónico a:', email);
+    console.log("Enviando correo electrónico a:", email);
     try {
-      // const response = await axios.post('https://back-seven-plum.vercel.app/send-email-register', {
-        const response = await axios.post('http://localhost:8081/send-email-register', {
-        to: email,
-        subject: 'Confirmación de registro en eCommerce2',
-        text: 'Gracias por registrarte en nuestro sitio.',
-      });
-  
-      console.log(response.data.message); // Mensaje de confirmación del servidor
+      const response = await axios.post(
+        "https://back-seven-plum.vercel.app/send-email-register",
+        {
+          // const response = await axios.post('http://localhost:8081/send-email-register', {
+          to: email,
+          subject: "Confirmación de registro en eCommerce2",
+          text: "Gracias por registrarte en nuestro sitio.",
+        }
+      );
+
+      console.log(response.data.message);
     } catch (error) {
-      console.error('Error al enviar el correo electrónico:', error);
+      console.error("Error al enviar el correo electrónico:", error);
     }
   };
 
   const formik = useFormik({
     initialValues,
     validationSchema,
-    onSubmit: handleSubmit,    
+    onSubmit: handleSubmit,
   });
 
   return (
@@ -165,11 +164,13 @@ const Register = () => {
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 value={formik.values.lastname}
-                error={formik.touched.lastname && Boolean(formik.errors.lastname)}
+                error={
+                  formik.touched.lastname && Boolean(formik.errors.lastname)
+                }
                 helperText={formik.touched.lastname && formik.errors.lastname}
               />
             </Grid>
-            
+
             <Grid item xs={10} md={12}>
               <TextField
                 name="email"
@@ -229,7 +230,8 @@ const Register = () => {
                   onBlur={formik.handleBlur}
                   value={formik.values.confirmPassword}
                   error={
-                    formik.touched.confirmPassword && Boolean(formik.errors.confirmPassword)
+                    formik.touched.confirmPassword &&
+                    Boolean(formik.errors.confirmPassword)
                   }
                   endAdornment={
                     <InputAdornment position="end">
@@ -254,7 +256,7 @@ const Register = () => {
             <Grid item xs={10} md={12}>
               <Typography>
                 {mostrarTextoCompleto ? (
-                                    <div className="politicas">
+                  <div className="politicas">
                     <p>
                       {`Política de privacidad.
         En este sitio web, respetamos su información personal y en vista de cumplir con las políticas de seguridad respectivas concernientes a todo sitio web, que deberían ser obligatorias, informamos lo siguiente...`}
@@ -284,7 +286,6 @@ const Register = () => {
                     </p>
                   </div>
                 ) : (
-                  
                   <div className="politicas">
                     <p>
                       {`La política de privacidad en este sitio web...`}

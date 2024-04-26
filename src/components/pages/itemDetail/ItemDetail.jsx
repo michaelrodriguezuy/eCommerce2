@@ -78,11 +78,6 @@ const ItemDetail = () => {
   //   localStorage.removeItem("originalArticleId");
   // }
 
-  const handleColorSelection = (color) => {
-    setSelectedColor(color);
-    setColorSelected(true); 
-  };
-
   const sumar = () => {
     if (contador < product.stock) {
       setContador(contador + 1);

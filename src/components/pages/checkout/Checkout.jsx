@@ -235,8 +235,8 @@ const Checkout = () => {
     console.log("Enviando solicitud al server...");
     try {
       let response = await axios.post(
-        "http://localhost:8081/create_preference",
-        // "https://back-seven-plum.vercel.app/create_preference",
+        // "http://localhost:8081/create_preference",
+        "https://back-seven-plum.vercel.app/create_preference",
         {
           items: items,
           shipment_cost: parseFloat(shipmentCost),
@@ -256,8 +256,8 @@ const Checkout = () => {
 
   const sendEmailUser = async () => {
     try {
-      // const response = await axios.post('https://back-seven-plum.vercel.app/send-email', {
-        const response = await axios.post('http://localhost:8081/send-email-checkout-user', {
+      const response = await axios.post('https://back-seven-plum.vercel.app/send-email-checkout-user', {
+        // const response = await axios.post('http://localhost:8081/send-email-checkout-user', {
         to: user.email,
         subject: 'Puedes ver los datos de tu compra entrando a tu perfil en la opcion "Mis compras"', 
         text: 'Datos de tu compra en e-Commerce'
@@ -270,8 +270,8 @@ const Checkout = () => {
   };
   const sendEmail = async () => {
     try {
-      // const response = await axios.post('https://back-seven-plum.vercel.app/send-email', {
-        const response = await axios.post('http://localhost:8081/send-email-checkout', {
+      const response = await axios.post('https://back-seven-plum.vercel.app/send-email-checkout', {
+        // const response = await axios.post('http://localhost:8081/send-email-checkout', {
         to: 'olimarteam@gmail.com', //correo del comercio
         subject: 'Se ha recibido una nueva venta con el ID: '+ orderId, 
         text: 'Datos de una venta en su e-Commerce'
